@@ -1,9 +1,9 @@
-const { app, Menu, Tray, BrowserWindow, ipcMain, session } = require("electron");
-const { ApiClient } = require("@twurple/api");
-const { PubSubClient } = require("@twurple/pubsub");
-const { ChatClient } = require("@twurple/chat");
-const { ElectronAuthProvider } = require("@twurple/auth-electron");
+const { app, Menu, Tray, BrowserWindow, ipcMain } = require("electron");
 const fs = require("fs");
+const WebSocket = require("ws");
+const { io } = require("socket.io-client");
+const { WebSocketBus, ApiClient, Plugin } = require("vtubestudio");
+const VtubeStudioAgent = require('./vtubeStudioAgent');
 
 var mainWindow;
 
@@ -40,7 +40,7 @@ const createWindow = () => {
   })
   
   mainWindow.loadFile("index.html")
-
+  //mainWindow.openDevTools();
   // Minimizing to and restoring from tray
   mainWindow.on("minimize", () => {
     if (data.minimizeToTray)
@@ -101,122 +101,8 @@ app.on("window-all-closed", () => {
   if (process.platform !== "darwin") app.quit()
 });
 
-// --------------
-// Authentication
-// --------------
+var vTubeStudioConnected = true, crowdControlConnected = false;
 
-var authProvider, token, apiClient, chatClient, userID, authenticated = false, authenticating = false, listenersActive = false;
-
-// Retry authorization every second
-setInterval(() => {
-  if (!authenticated && !authenticating)
-    authenticate();
-}, 1000);
-
-// Attempt authorization
-async function authenticate() {
-  const clientId = "u4rwa52hwkkgyoyow0t3gywxyv54pg";
-  const redirectUri = "https://twitchapps.com/tokengen/&scope=chat%3Aread%20chat%3Aedit%20channel%3Aread%3Aredemptions%20channel_subscriptions%20bits%3Aread";
-
-  // Prevent retrying authentication while signing in
-  authenticating = true;
-  authProvider = new ElectronAuthProvider({ clientId, redirectUri });
-
-  // Ensure token was successfully acquired
-  token = await authProvider.getAccessToken();
-  if (token != null)
-  {
-    loggedOut = false;
-    authenticated = true;
-    apiClient = new ApiClient({ authProvider });
-    var tokenInfo = await apiClient.getTokenInfo();
-    mainWindow.webContents.send("username", tokenInfo.userName);
-    pubSub(apiClient);
-  }
-
-  authenticating = false;
-}
-
-ipcMain.on("reauthenticate", async () => {
-  if (authProvider != null)
-  {
-    // Clear cookies to allow reauthentication
-    session.defaultSession.clearStorageData([], () => {});
-    authProvider.allowUserChange();
-    authenticated = false;
-    authenticating = false;
-    removeListeners();
-  }
-});
-
-var pubSubListeners = [], chatListeners = [];
-
-// Event listeners
-async function pubSub(apiClient) {
-  const pubSubClient = new PubSubClient();
-  userID = await pubSubClient.registerUserListener(authProvider);
-
-  // PubSub Event Listeners
-  if (authenticated)
-  {
-    console.log("Listening to Redemptions");
-    pubSubListeners.push(await pubSubClient.onRedemption(userID, onRedeemHandler));
-  }
-  else
-    removeListeners();
-
-  if (authenticated)
-  {
-    console.log("Listening to Subs");
-    pubSubListeners.push(await pubSubClient.onSubscription(userID, onSubHandler));
-  }
-  else
-    removeListeners();
-
-  if (authenticated)
-  {
-    console.log("Listening to Bits");
-    pubSubListeners.push(await pubSubClient.onBits(userID, onBitsHandler));
-  }
-  else
-    removeListeners();
-
-  const user = await apiClient.helix.users.getUserById(userID);
-  chatClient = new ChatClient({ authProvider, channels: [user.name] });
-  await chatClient.connect();
-
-  // Chat Event Listeners
-  if (authenticated)
-  {
-    console.log("Listening to Messages");
-    chatListeners.push(chatClient.onMessage(onMessageHandler));
-  }
-  else
-    removeListeners();
-  
-  if (authenticated)
-  {
-    console.log("Listening to Raids");
-    chatListeners.push(chatClient.onRaid(onRaidHandler));
-  }
-  else
-    removeListeners();
-
-  // Done enabling listeners
-  if (pubSubListeners.length > 0 || chatListeners.length > 0)
-    listenersActive = true;
-}
-
-function removeListeners()
-{
-  for (var i = 0; i < pubSubListeners.length; i++)
-    pubSubListeners[i].remove();
-  pubSubListeners = [];
-  for (var i = 0; i < chatListeners.length; i++)
-    chatClient.removeListener(chatListeners[i]);
-  chatListeners = [];
-  listenersActive = false;
-}
 
 // Periodically reporting status back to renderer
 var exiting = false;
@@ -226,9 +112,9 @@ setInterval(() => {
     var status = 0;
     if (portInUse)
       status = 9;
-    else if (!authenticated)
+    else if (!crowdControlConnected)
       status = 1;
-    else if (!listenersActive)
+    else if (!vTubeStudioConnected)
       status = 8;
     else if (socket == null)
       status = 2;
@@ -236,10 +122,8 @@ setInterval(() => {
       status = 3;
     else if (calibrateStage == 2 || calibrateStage == 3)
       status = 4;
-    else if (!connectedVTube)
+    else if (!connectedBonkerVTube)
       status = 5;
-    else if (listening)
-      status = 6;
     else if (calibrateStage == -1)
       status = 7;
   
@@ -255,17 +139,27 @@ if (!fs.existsSync(__dirname + "/data.json"))
   fs.writeFileSync(__dirname + "/data.json", JSON.stringify(defaultData));
 var data = JSON.parse(fs.readFileSync(__dirname + "/data.json", "utf8"));
 
-
-ipcMain.on("help", () => require('electron').shell.openExternal("https://typeou.dev/#kbonkHelp"));
-ipcMain.on("link", () => require('electron').shell.openExternal("https://typeou.itch.io/karasubonk"));
+// Get requested data, waiting for any current writes to finish first
+async function getData(field)
+{
+  var data;
+  // An error should only be thrown if the other process is in the middle of writing to the file.
+  // If so, it should finish shortly and this loop will exit.
+  while (data == null)
+  {
+    try {
+      data = JSON.parse(fs.readFileSync(__dirname + "/data.json", "utf8"));
+    } catch {}
+  }
+  data = JSON.parse(fs.readFileSync(__dirname + "/data.json", "utf8"));
+  return data[field];
+}
 
 // ----------------
 // Websocket Server
 // ----------------
 
-const WebSocket = require("ws");
-
-var wss, portInUse = false, socket, connectedVTube = false;
+var wss, portInUse = false, socket, cc_socket, vtube_socket, connectedBonkerVTube = false;
 
 createServer();
 
@@ -327,7 +221,7 @@ function createServer()
           }
         }
         else if (request.type == "status")
-          connectedVTube = request.connectedVTube;
+          connectedBonkerVTube = request.connectedBonkerVTube;
       });
     
       ws.on("close", function message()
@@ -336,6 +230,87 @@ function createServer()
         calibrateStage = -2;
       });
     });
+  }
+}
+
+// ----------------
+// Crowd Control Connection
+// ----------------
+createCrowdControlConnection();
+function createCrowdControlConnection()
+{
+  cc_socket = io("wss://crowdcontrol.warp.bar");
+  cc_socket.on("connect", () => {
+    console.log("CC Socket: Connected to Crowd Control!! Socket ID: " + cc_socket.id);
+    cc_socket.emit("type", "init");
+    cc_socket.emit("events", data.cc_channel);
+    console.log("CC Socket: Getting events from channel " + data.cc_channel);
+    crowdControlConnected = true;
+  });
+
+  cc_socket.on("disconnect", () => {
+    console.log("CC Socket: Disconnected from Crowd Control! ");
+    crowdControlConnected = false;
+  });
+
+  cc_socket.io.on("error", (error) => {
+    console.log("CC Socket Error: " + error);
+  });
+
+  cc_socket.on("message", (args) => {
+    checkCrowdControlEvent(args);
+  });
+}
+
+// ----------------
+// VTube Studio Connection
+// ----------------
+const vts = new VtubeStudioAgent(data.portVTubeStudio);
+
+async function checkCrowdControlEvent(event) {
+  if(event.hasOwnProperty("effect")) {
+    console.log(`Event intercepted: "${event.effectName}" (effect "${event.effect}", type "${event.type}")`);
+
+    var customEvents = await getData("crowdControlEvents");
+    var matchedEvent = null;
+    Object.entries(customEvents).forEach(item => {
+      const [key, customEvent] = item;
+      if(event.effect == customEvent.triggerName && event.type == customEvent.triggerType) {
+        matchedEvent = customEvent;
+        console.log('Found a matching event: ' + key);
+      }
+    });
+
+    if(matchedEvent) {
+      //Execute the bonk if enabled
+      if(matchedEvent.bonkEnabled && matchedEvent.bonkType.length > 0) {
+        custom(matchedEvent.bonkType);
+      }
+
+      //Execute the hotkey(s) if enabled
+      if(matchedEvent.hotkeyEnabled && matchedEvent.hotkeyName.length > 0) {
+        //Trigger the selected hotkey
+        vts.triggerHotkey(matchedEvent.hotkeyName);
+        if(matchedEvent.secondHotkeyEnabled && matchedEvent.secondHotkeyName.length > 0) {
+          //Trigger the follow-up hotkey after the specified delay
+          setTimeout(() => {vts.triggerHotkey(matchedEvent.secondHotkeyName)},matchedEvent.secondHotkeyDelay);
+        }
+      }
+
+      //Execute the expression if enabled
+      if(matchedEvent.expressionEnabled && matchedEvent.expressionName.length > 0) {
+        //Activate selected expression
+        vts.activateExpression(matchedEvent.expressionName);
+        if(parseInt(matchedEvent.expressionDuration) > 0) {
+          //Deactivate expression after the listed duration
+          setTimeout(() => {vts.deactivateExpression(matchedEvent.expressionName)},matchedEvent.expressionDuration);
+        }
+      }
+
+    }
+  }
+  if(event.type === "refresh") {
+    console.log("Refresh command received! (This is typically used to clear the overlay.)");
   }
 }
 
@@ -350,7 +325,7 @@ ipcMain.on("cancelCalibrate", () => cancelCalibrate());
 var calibrateStage = -2;
 function startCalibrate()
 {
-  if (socket != null && connectedVTube)
+  if (socket != null && connectedBonkerVTube)
   {
     calibrateStage = -1;
     calibrate();
@@ -359,7 +334,7 @@ function startCalibrate()
 
 function nextCalibrate()
 {
-  if (socket != null && connectedVTube)
+  if (socket != null && connectedBonkerVTube)
   {
     calibrateStage++;
     calibrate();
@@ -368,7 +343,7 @@ function nextCalibrate()
 
 function cancelCalibrate()
 {
-  if (socket != null && connectedVTube)
+  if (socket != null && connectedBonkerVTube)
   {
     calibrateStage = 4;
     calibrate();
@@ -428,8 +403,6 @@ function getImagesWeightsScalesSoundsVolumes(customAmount)
 // Test Events
 ipcMain.on("single", () => single());
 ipcMain.on("barrage", () => barrage());
-ipcMain.on("bits", () => onBitsHandler());
-ipcMain.on("raid", () => onRaidHandler());
 
 // Testing a specific item
 ipcMain.on("testItem", (event, message) => testItem(event, message));
@@ -626,6 +599,9 @@ function setData(field, value, external)
 {
   data[field] = value;
   fs.writeFileSync(__dirname + "/data.json", JSON.stringify(data));
+  if(field == "portVTubeStudio") {
+    vts.setPort(value);
+  }
   if (external)
     mainWindow.webContents.send("doneWriting");
 }
@@ -736,333 +712,4 @@ function hasActiveSoundCustom(customName)
     }
   }
   return active;
-}
-
-function hasActiveBitSound()
-{
-  if (data.impacts == null || data.impacts.length == 0)
-    return false;
-
-  var active = false;
-  for (var i = 0; i < data.impacts.length; i++)
-  {
-    if (data.impacts[i].bits)
-    {
-      active = true;
-      break;
-    }
-  }
-  return active;
-}
-
-// --------------
-// Event Handlers
-// --------------
-
-var commandCooldowns = {};
-function onMessageHandler(_, _, message)
-{
-  console.log("Received Message");
-
-  if (data.commands != null)
-  {
-    for (var i = 0; i < data.commands.length; i++)
-    {
-      if (data.commands[i].name != "" && data.commands[i].name.toLowerCase() == message.toLowerCase() && commandCooldowns[data.commands[i].name.toLowerCase()] == null)
-      {
-        switch (data.commands[i].bonkType)
-        {
-          case "single":
-            single();
-            break;
-          case "barrage":
-            barrage();
-            break;
-          default:
-            custom(data.commands[i].bonkType);
-            break;
-        }
-
-        commandCooldowns[data.commands[i].name.toLowerCase()] = true;
-        setTimeout(() => { delete commandCooldowns[data.commands[i].name.toLowerCase()]; }, data.commands[i].cooldown * 1000);
-        break;
-      }
-    }
-  }
-}
-
-ipcMain.on("listenRedeemStart", () => { listening = true; });
-ipcMain.on("listenRedeemCancel", () => { listening = false; });
-
-var listening = false;
-async function onRedeemHandler(redemptionMessage)
-{
-  const reward = await apiClient.helix.channelPoints.getCustomRewardById(redemptionMessage.channelId, redemptionMessage.rewardId);
-
-  if (listening)
-  {
-    mainWindow.webContents.send("redeemData", [ redemptionMessage.rewardId, reward.title ] );
-    listening = false;
-  }
-  else if (data.redeems != null)
-  {
-    for (var i = 0; i < data.redeems.length; i++)
-    {
-      if (data.redeems[i].id == redemptionMessage.rewardId)
-      {
-        switch (data.redeems[i].bonkType)
-        {
-          case "single":
-            single();
-            break;
-          case "barrage":
-            barrage();
-            break;
-          default:
-            custom(data.redeems[i].bonkType);
-            break;
-        }
-
-        break;
-      }
-    }
-  }
-}
-
-var canSub = true, canSubGift = true;
-function onSubHandler(subMessage)
-{
-  if (canSub && data.subEnabled && !subMessage.isGift)
-  {
-    switch (data.subBonkType)
-    {
-      case "single":
-        single();
-        break;
-      case "barrage":
-        barrage();
-        break;
-      default:
-        custom(data.subBonkType);
-        break;
-    }
-
-    if (data.subCooldown > 0)
-    {
-      canSub = false;
-      setTimeout(() => { canSub = true; }, data.subCooldown * 1000);
-    }
-  }
-  else if (canSubGift && data.subGiftEnabled && subMessage.isGift)
-  {
-    switch (data.subGiftType)
-    {
-
-      case "single":
-        single();
-        break;
-      case "barrage":
-        barrage();
-        break;
-      default:
-        custom(data.subGiftType);
-        break;
-    }
-
-    if (data.subGiftCooldown > 0)
-    {
-      canSubGift = false;
-      setTimeout(() => { canSubGift = true; }, data.subGiftCooldown * 1000);
-    }
-  }
-}
-
-const bitTiers = [ 100, 1000, 5000, 10000 ];
-
-var canBits = true;
-function onBitsHandler(bitsMessage)
-{
-  if (bitsMessage == null || canBits && data.bitsEnabled && bitsMessage.bits >= data.bitsMinDonation) {
-    if (bitsMessage != null && data.bitsCooldown > 0)
-    {
-      canBits = false;
-      setTimeout(() => { canBits = true; }, data.bitsCooldown * 1000);
-    }
-
-    var totalBits = bitsMessage == null ? bitTiers[Math.floor(Math.random() * bitTiers.length)] : bitsMessage.bits;
-
-    var numBits = [0, 0, 0, 0], canAdd = true;
-    while (!data.bitsOnlySingle && totalBits >= 100 && totalBits + numBits[0] + numBits[1] + numBits[2] + numBits[3] > data.bitsMaxBarrageCount && canAdd)
-    {
-      canAdd = false;
-      for (var i = bitTiers.length - 1; i >= 0; i--)
-      {
-        var max = Math.floor(totalBits / bitTiers[i]);
-        if (max > 1)
-          canAdd = true;
-        var temp = Math.floor(Math.random() * max);
-        numBits[i] += temp;
-        totalBits -= temp * bitTiers[i];
-      }
-    }
-
-    if (totalBits + numBits[0] + numBits[1] + numBits[2] + numBits[3] > data.bitsMaxBarrageCount)
-      totalBits = data.bitsMaxBarrageCount - (numBits[0] + numBits[1] + numBits[2] + numBits[3]);
-
-    var bitThrows = [];
-    for (var i = 0; i < bitTiers.length; i++)
-    {
-      while (numBits[i]-- > 0)
-        bitThrows.push(bitTiers[i]);
-    }
-    while (totalBits-- > 0)
-      bitThrows.push(1);
-    
-    if (socket != null) {
-      var images = [], weights = [], scales = [], sounds = [], volumes = [];
-      while (bitThrows.length > 0)
-      {
-        switch (bitThrows.splice(Math.floor(Math.random() * bitThrows.length), 1)[0])
-        {
-          case 1:
-            images.push(data.bitThrows.one.location);
-            weights.push(0.2);
-            scales.push(data.bitThrows.one.scale);
-            break;
-          case 100:
-            images.push(data.bitThrows.oneHundred.location);
-            weights.push(0.4);
-            scales.push(data.bitThrows.oneHundred.scale);
-            break;
-          case 1000:
-            images.push(data.bitThrows.oneThousand.location);
-            weights.push(0.6);
-            scales.push(data.bitThrows.oneThousand.scale);
-            break;
-          case 5000:
-            images.push(data.bitThrows.fiveThousand.location);
-            weights.push(0.8);
-            scales.push(data.bitThrows.fiveThousand.scale);
-            break;
-          case 10000:
-            images.push(data.bitThrows.tenThousand.location);
-            weights.push(1);
-            scales.push(data.bitThrows.tenThousand.scale);
-            break;
-        }
-        
-        if (hasActiveBitSound())
-        {
-          var soundIndex;
-          do {
-            soundIndex = Math.floor(Math.random() * data.impacts.length);
-          } while (!data.impacts[soundIndex].bits);
-
-          sounds.push(data.impacts[soundIndex].location);
-          volumes.push(data.impacts[soundIndex].volume);
-        }
-        else
-        {
-          sounds.push(null);
-          volumes.push(0);
-        }
-      }
-
-      var request = {
-        "type": "barrage",
-        "image": images,
-        "weight": weights,
-        "scale": scales,
-        "sound": sounds,
-        "volume": volumes,
-        "data": data
-      }
-      socket.send(JSON.stringify(request));
-    }
-  }
-}
-
-var canRaid = true, numRaiders = 0;
-async function onRaidHandler(_, raider, raidInfo)
-{
-  if (data.raidEnabled && canRaid)
-  {
-    if (raider != null && data.raidCooldown > 0)
-    {
-      canRaid = false;
-      setTimeout(() => { canRaid = true; }, data.raidCooldown * 1000);
-    }
-
-    if (raider == null)
-    {
-      raider = userID
-      numRaiders = data.raidMinBarrageCount + Math.floor(Math.random() * (data.raidMaxBarrageCount - data.raidMinBarrageCount));
-    }
-    else
-    {
-      numRaiders = raidInfo.viewerCount;
-      raider = await apiClient.helix.users.getUserByName(raider);
-      raider = raider.id;
-    }
-
-    if (numRaiders < data.raidMinBarrageCount)
-      numRaiders = data.raidMinBarrageCount;
-  
-    if (numRaiders > data.raidMaxBarrageCount)
-      numRaiders = data.raidMaxBarrageCount;
-  
-      if (data.raidEmotes)
-        mainWindow.webContents.send("raid", [ raider, token.accessToken ]);
-      else
-        barrage(numRaiders);
-  }
-}
-
-ipcMain.on("emotes", (event, message) => handleRaidEmotes(event, message));
-
-function handleRaidEmotes(_, emotes)
-{
-  if (socket != null)
-  {
-    if (emotes.data.length > 0)
-    {
-      var images = [], weights = [], scales = [], sounds = [], volumes = [];
-      for (var i = 0; i < numRaiders; i++)
-      {
-        images.push("https://static-cdn.jtvnw.net/emoticons/v1/" + emotes.data[Math.floor(Math.random() * emotes.data.length)].id + "/3.0");
-  
-        weights.push(1);
-        scales.push(1);
-  
-        if (hasActiveSound())
-        {
-          var soundIndex;
-          do {
-            soundIndex = Math.floor(Math.random() * data.impacts.length);
-          } while (!data.impacts[soundIndex].enabled);
-  
-          sounds.push(data.impacts[soundIndex].location);
-          volumes.push(data.impacts[soundIndex].volume);
-        }
-        else
-        {
-          sounds.push(null);
-          volumes.push(0);
-        }
-      }
-  
-      var request = {
-        "type": "barrage",
-        "image": images,
-        "weight": weights,
-        "scale": scales,
-        "sound": sounds,
-        "volume": volumes,
-        "data": data
-      }
-      socket.send(JSON.stringify(request));
-    }
-    else
-      barrage(numRaiders);
-  }
 }

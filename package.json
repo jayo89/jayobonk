@@ -1,15 +1,13 @@
 {
-  "name": "karasubonk",
-  "version": "1.1.5",
-  "description": "Lightweight item thrower for Live2D models.",
+  "name": "jayobonk",
+  "version": "0.1.0",
+  "description": "Modified, CrowdControl-integrated item thrower for Live2D models.",
   "main": "main.js",
   "dependencies": {
-    "@twurple/api": "^5.0.19",
-    "@twurple/auth": "^5.0.19",
-    "@twurple/auth-electron": "^5.0.19",
-    "@twurple/chat": "^5.0.19",
-    "@twurple/pubsub": "^5.0.19",
-    "electron-squirrel-startup": "^1.0.0"
+    "electron-squirrel-startup": "^1.0.0",
+    "socket.io-client": "^4.5.0",
+    "vtubestudio": "^1.10.0",
+    "ws": "^8.6.0"
   },
   "devDependencies": {
     "@electron-forge/cli": "^6.0.0-beta.63",
@@ -35,7 +33,7 @@
         {
           "name": "@electron-forge/maker-squirrel",
           "config": {
-            "name": "karasubonk"
+            "name": "jayobonk"
           }
         },
         {

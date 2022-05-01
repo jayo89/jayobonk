@@ -99,7 +99,7 @@ body > div {
     clip-path: polygon(calc(100% - 8px) 0%, 100% 0%, calc(100% - 69px) 100%, calc(100% - 77px) 100%);
 }
 
-#logoKBonk {
+#logoJBonk {
     margin: 8px;
     margin-left: 16px;
     height: 48px;
@@ -734,7 +734,7 @@ a {
     grid-template-columns: 64px auto auto;;
 }
 
-#bonkDetailsTable, #eventsTable {
+#bonkDetailsTable {
     display: grid;
     line-height: 30px;
     gap: 8px;
@@ -744,9 +744,7 @@ a {
     grid-column: 1 / 4;
 }
 
-#eventsTable > .header {
-    grid-column: 1 / 5;
-}
+
 
 #bonkDetailsTable > p, #eventsTable > p {
     margin: 0;
@@ -756,11 +754,37 @@ a {
     width: 64px;
 }
 
-#eventsTable > input {
-    width: 96px;
+#bonkDetailsTable > button {
+    width: 64px;
 }
 
-#bonkDetailsTable > button {
+#eventsTable > .header {
+    grid-column: 1 / 5;
+}
+
+#eventDetailsTable {
+    display: grid;
+    line-height: 30px;
+    gap: 8px;
+}
+
+#eventDetailsTable {
+    grid-template-columns: 64px auto auto;;
+}
+
+#eventDetailsTable > .header {
+    grid-column: 1 / 4;
+}
+
+#eventDetailsTable > p {
+    margin: 0;
+}
+
+#eventDetailsTable > input {
+    width: 95%;
+}
+
+#eventDetailsTable > button {
     width: 64px;
 }
 
@@ -1084,10 +1108,6 @@ mark {
     grid-column: 1 / 6;
     display: grid;
     gap: 8px;
-}
-
-#eventsTable, .redeemsRow, .commandsRow {
-    grid-template-columns: 70px 228px 104px 104px 32px;
 }
 
 .redeemsRow p, .commandsRow p {

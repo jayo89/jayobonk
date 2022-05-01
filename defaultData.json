@@ -1,4 +1,5 @@
 {
+    "cc_channel": "jayo_exe",
     "portThrower": 8080,
     "portVTubeStudio": 8001,
     "throws": [
@@ -234,37 +235,6 @@
             ]
         }
     ],
-    "bitThrows": {
-        "one": {
-            "location": "throws/1.png",
-            "scale": 1.5
-        },
-        "oneHundred": {
-            "location": "throws/100.png",
-            "scale": 1.5
-        },
-        "oneThousand": {
-            "location": "throws/1000.png",
-            "scale": 1.5
-        },
-        "fiveThousand": {
-            "location": "throws/5000.png",
-            "scale": 1.5
-        },
-        "tenThousand": {
-            "location": "throws/10000.png",
-            "scale": 1.5
-        }
-    },
-    "subEnabled": true,
-    "subGiftEnabled": true,
-    "bitsEnabled": true,
-    "subType": "barrage",
-    "subGiftType": "barrage",
-    "bitsMaxBarrageCount": 50,
-    "subCooldown": 0,
-    "subGiftCooldown": 0,
-    "bitsCooldown": 0,
     "barrageCount": 30,
     "barrageFrequency": 0.1,
     "returnSpeed": 0.05,
@@ -277,9 +247,6 @@
     "throwDuration": 1,
     "throwAngleMin": -45,
     "throwAngleMax": 45,
-    "raidEnabled": true,
-    "raidMaxBarrageCount": 50,
-    "raidCooldown": 0,
     "customBonks": {
         "Hydrate": {
             "barrageCount": 10,
@@ -300,46 +267,7 @@
             "windupDelay": 0
         }
     },
-    "redeems": [
-        {
-            "enabled": true,
-            "name": null,
-            "cooldown": 0,
-            "bonkType": "single",
-            "id": null
-        },
-        {
-            "enabled": true,
-            "id": null,
-            "name": null,
-            "bonkType": "barrage"
-        },
-        {
-            "enabled": true,
-            "id": null,
-            "name": null,
-            "bonkType": "Hydrate"
-        }
-    ],
-    "commands": [
-        {
-            "enabled": false,
-            "name": "!bonk",
-            "cooldown": "10",
-            "bonkType": "single"
-        },
-        {
-            "enabled": false,
-            "name": "!manybonk",
-            "cooldown": "60",
-            "bonkType": "barrage"
-        }
-    ],
-    "raidEmotes": true,
     "spinSpeedMin": 5,
     "spinSpeedMax": 10,
-    "minimizeToTray": false,
-    "bitsMinDonation": 0,
-    "raidMinBarrageCount": 10,
-    "bitsOnlySingle": false
+    "minimizeToTray": false
 }

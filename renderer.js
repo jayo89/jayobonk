@@ -1,7 +1,7 @@
 const { ipcRenderer } = require("electron");
 const fs = require("fs");
 
-const version = 1.15;
+const version = 0.1;
 
 // ------
 // Status
@@ -11,46 +11,29 @@ var status = 0;
 
 const statusTitle = [
     "Ready!",
-    "Authenticating...",
+    "Connecting to CrowdControl...",
     "Connecting to Browser Source...",
     "Calibrating (1/2)",
     "Calibrating (2/2)",
-    "Connecting to VTube Studio...",
-    "Listening for Redeem...",
+    "Connecting Bonker to VTube Studio...",
+    "",
     "Calibration",
-    "Activating Event Listeners...",
+    "Connecting Bot to VTube Studio...",
     "Error: Port In Use"
 ];
 
 const statusDesc = [
     "",
-    "<p>If you haven't logged in before or access has expired, a Twitch login window will appear.</p><p>If it doesn't appear, you may also click the \"Log in\" button below to allow the window to reappear.</p>",
-    "<p>If this message doesn't disappear after a few seconds, please refresh the KBonk Browser Source in OBS.</p><p>The KBonk Browser Source should be active with <mark>karasubonk/resources/app/bonker.html</mark> as the source file.</p>",
-    "<p>Please use VTube Studio to position your model's head under the guide being displayed in OBS.</p><p>Your VTube Studio Source and KBonk Browser Source should be overlapping.</p><p>Press the <mark>Continue Calibration</mark> button below to continue to the next step.</p>",
-    "<p>Please use VTube Studio to position your model's head under the guide being displayed in OBS.</p><p>Your VTube Studio Source and KBonk Browser Source should be overlapping.</p><p>Press the <mark>Confirm Calibration</mark> button below to finish calibration.</p>",
-    [ "<p>If this message doesn't disappear after a few seconds, please refresh the KBonk Browser Source.</p><p>If that doesn't work, please ensure the VTube Studio API is enabled on port <mark>", "</mark>.</p>" ],
-    "<p>Please use the Channel Point Reward you'd like to use.</p>",
+    "<p>We're currently connecting to Crowd Control</p>",
+    "<p>If this message doesn't disappear after a few seconds, please refresh the JayoBonk Browser Source in OBS.</p><p>The JayoBonk Browser Source should be active with <mark>jayobonk/resources/app/bonker.html</mark> as the source file.</p>",
+    "<p>Please use VTube Studio to position your model's head under the guide being displayed in OBS.</p><p>Your VTube Studio Source and JayoBonk Browser Source should be overlapping.</p><p>Press the <mark>Continue Calibration</mark> button below to continue to the next step.</p>",
+    "<p>Please use VTube Studio to position your model's head under the guide being displayed in OBS.</p><p>Your VTube Studio Source and JayoBonk Browser Source should be overlapping.</p><p>Press the <mark>Confirm Calibration</mark> button below to finish calibration.</p>",
+    [ "<p>If this message doesn't disappear after a few seconds, please refresh the JayoBonk Browser Source.</p><p>If that doesn't work, please ensure the VTube Studio API is enabled on port <mark>", "</mark>.</p>" ],
+    "<p></p>",
     "<p>This short process will decide the impact location of thrown objects.</p><p>Please click \"Start Calibration\" to start the calibration process.</p>",
-    "<p>Several windows will briefly appear during this process.</p>",
+    "<p></p>",
     [ "<p>The port <mark>", "</mark> is already in use. Another process may be using this port.</p><p>Try changing the Browser Source Port in Settings, under Advanced Settings.</p><p>It should be some number between 1024 and 65535.</p>"]
 ];
-
-ipcRenderer.on("username", (event, message) => {
-    document.querySelector("#username").classList.add("readyText");
-    document.querySelector("#username").classList.remove("errorText");
-    document.querySelector("#username").innerText = message;
-    document.querySelector("#logout").innerText = "Log out";
-});
-
-document.querySelector("#logout").addEventListener("click", () => {
-    ipcRenderer.send("reauthenticate");
-    document.querySelector("#username").classList.remove("readyText");
-    document.querySelector("#username").classList.add("errorText");
-    document.querySelector("#username").innerText = "None";
-    document.querySelector("#logout").innerText = "Log in";
-});
-
-document.querySelector("#itchLink a").addEventListener("click", () => { ipcRenderer.send("link"); });
 
 ipcRenderer.on("status", (event, message) => { setStatus(event, message); });
 
@@ -712,102 +695,6 @@ async function openWindupSounds(customName)
     });
 }
 
-document.querySelector("#bit1").querySelector(".bitImageScale").addEventListener("change", async () => {
-    var bitThrows = await getData("bitThrows");
-    bitThrows.one.scale = parseFloat(document.querySelector("#bit1").querySelector(".bitImageScale").value);
-    setData("bitThrows", bitThrows);
-});
-document.querySelector("#bitImageAdd1").addEventListener("click", () => { document.querySelector("#loadBitImageone").click(); });
-document.querySelector("#loadBitImageone").addEventListener("change", () => { loadBitImage("one") });
-
-document.querySelector("#bit100").querySelector(".bitImageScale").addEventListener("change", async () => {
-    var bitThrows = await getData("bitThrows");
-    bitThrows.oneHundred.scale = parseFloat(document.querySelector("#bit100").querySelector(".bitImageScale").value);
-    setData("bitThrows", bitThrows);
-});
-document.querySelector("#bitImageAdd100").addEventListener("click", () => { document.querySelector("#loadBitImageoneHundred").click(); });
-document.querySelector("#loadBitImageoneHundred").addEventListener("change", () => { loadBitImage("oneHundred") });
-
-document.querySelector("#bit1000").querySelector(".bitImageScale").addEventListener("change", async () => {
-    var bitThrows = await getData("bitThrows");
-    bitThrows.oneThousand.scale = parseFloat(document.querySelector("#bit1000").querySelector(".bitImageScale").value);
-    setData("bitThrows", bitThrows);
-});
-document.querySelector("#bitImageAdd1000").addEventListener("click", () => { document.querySelector("#loadBitImageoneThousand").click(); });
-document.querySelector("#loadBitImageoneThousand").addEventListener("change", () => { loadBitImage("oneThousand") });
-
-document.querySelector("#bit5000").querySelector(".bitImageScale").addEventListener("change", async () => {
-    var bitThrows = await getData("bitThrows");
-    bitThrows.fiveThousand.scale = parseFloat(document.querySelector("#bit5000").querySelector(".bitImageScale").value);
-    setData("bitThrows", bitThrows);
-});
-document.querySelector("#bitImageAdd5000").addEventListener("click", () => { document.querySelector("#loadBitImagefiveThousand").click(); });
-document.querySelector("#loadBitImagefiveThousand").addEventListener("change", () => { loadBitImage("fiveThousand") });
-
-document.querySelector("#bit10000").querySelector(".bitImageScale").addEventListener("change", async () => {
-    var bitThrows = await getData("bitThrows");
-    bitThrows.tenThousand.scale = parseFloat(document.querySelector("#bit10000").querySelector(".bitImageScale").value);
-    setData("bitThrows", bitThrows);
-});
-document.querySelector("#bitImageAdd10000").addEventListener("click", () => { document.querySelector("#loadBitImagetenThousand").click(); });
-document.querySelector("#loadBitImagetenThousand").addEventListener("change", () => { loadBitImage("tenThousand") });
-
-async function loadBitImage(key)
-{
-    var bitThrows = await getData("bitThrows");
-    var files = document.querySelector("#loadBitImage" + key).files;
-    // Grab the image that was just loaded
-    var imageFile = files[0];
-    // If the folder for objects doesn't exist for some reason, make it
-    if (!fs.existsSync(__dirname + "/throws/"))
-        fs.mkdirSync(__dirname + "/throws/");
-
-    // Ensure that we're not overwriting any existing files with the same name
-    // If a file already exists, add an interating number to the end until it"s a unique filename
-    var append = "";
-    if (imageFile.path != __dirname + "\\throws\\" + imageFile.name)
-        while (fs.existsSync(__dirname + "/throws/" + imageFile.name.substr(0, imageFile.name.lastIndexOf(".")) + append + imageFile.name.substr(imageFile.name.lastIndexOf("."))))
-            append = append == "" ? 2 : (append + 1);
-    var filename = imageFile.name.substr(0, imageFile.name.lastIndexOf(".")) + append + imageFile.name.substr(imageFile.name.lastIndexOf("."));
-
-    // Make a copy of the file into the local folder
-    fs.copyFileSync(imageFile.path, __dirname + "/throws/" + filename);
-    
-    // Add the new image, update the data, and refresh the images page
-    bitThrows[key].location = "throws/" + filename;
-    setData("bitThrows", bitThrows);
-    openBitImages();
-    
-    // Reset the image upload
-    document.querySelector("#loadBitImage" + key).value = null;
-}
-
-async function openBitImages()
-{
-    var bitThrows = await getData("bitThrows");
-
-    if (bitThrows == null)
-    {
-        bitThrows = defaultData.bitThrows;
-        setData("bitThrows", bitThrows);
-    }
-
-    document.querySelector("#bit1").querySelector(".imageImage").src = bitThrows.one.location;
-    document.querySelector("#bit1").querySelector(".bitImageScale").value = bitThrows.one.scale;
-
-    document.querySelector("#bit100").querySelector(".imageImage").src = bitThrows.oneHundred.location;
-    document.querySelector("#bit100").querySelector(".bitImageScale").value = bitThrows.oneHundred.scale;
-
-    document.querySelector("#bit1000").querySelector(".imageImage").src = bitThrows.oneThousand.location;
-    document.querySelector("#bit1000").querySelector(".bitImageScale").value = bitThrows.oneThousand.scale;
-
-    document.querySelector("#bit5000").querySelector(".imageImage").src = bitThrows.fiveThousand.location;
-    document.querySelector("#bit5000").querySelector(".bitImageScale").value = bitThrows.fiveThousand.scale;
-
-    document.querySelector("#bit10000").querySelector(".imageImage").src = bitThrows.tenThousand.location;
-    document.querySelector("#bit10000").querySelector(".bitImageScale").value = bitThrows.tenThousand.scale;
-}
-
 document.querySelector("#loadImageSound").addEventListener("change", loadImageSound);
 
 async function loadImageSound()
@@ -927,7 +814,6 @@ async function loadSound()
             "location": "impacts/" + filename,
             "volume": 1.0,
             "enabled": true,
-            "bits": true,
             "customs": []
         });
     }
@@ -1007,96 +893,7 @@ async function openSounds()
     }
 }
 
-document.querySelector("#newBitSound").addEventListener("click", () => { document.querySelector("#loadBitSound").click(); });
-document.querySelector("#loadBitSound").addEventListener("change", loadBitSound);
 
-async function loadBitSound()
-{
-    var impacts = await getData("impacts");
-    var files = document.querySelector("#loadBitSound").files;
-    for (var i = 0; i < files.length; i++)
-    {
-        var soundFile = files[i];
-        if (!fs.existsSync(__dirname + "/impacts/"))
-            fs.mkdirSync(__dirname + "/impacts/");
-
-        var append = "";
-        while (fs.existsSync(__dirname + "/impacts/" + soundFile.name.substr(0, soundFile.name.lastIndexOf(".")) + append + soundFile.name.substr(soundFile.name.lastIndexOf("."))))
-            append = append == "" ? 2 : (append + 1);
-        var filename = soundFile.name.substr(0, soundFile.name.lastIndexOf(".")) + append + soundFile.name.substr(soundFile.name.lastIndexOf("."));
-
-        fs.copyFileSync(soundFile.path, __dirname + "/impacts/" + filename);
-        
-        impacts.unshift({
-            "location": "impacts/" + filename,
-            "volume": 1.0,
-            "enabled": false,
-            "bits": true,
-            "customs": []
-        });
-    }
-    setData("impacts", impacts);
-    openBitSounds();
-
-    document.querySelector("#loadBitSound").value = null;
-}
-
-document.querySelector("#bitSoundTable").querySelector(".selectAll input").addEventListener("change", async () => {
-    document.querySelector("#bitSoundTable").querySelectorAll(".imageEnabled").forEach((element) => { 
-        element.checked = document.querySelector("#bitSoundTable").querySelector(".selectAll input").checked;
-    });
-    var impacts = await getData("impacts");
-    for (var i = 0; i < impacts.length; i++)
-        impacts[i].bits = document.querySelector("#bitSoundTable").querySelector(".selectAll input").checked;
-    setData("impacts", impacts);
-});
-
-async function openBitSounds()
-{
-    var impacts = await getData("impacts");
-    
-    document.querySelectorAll(".bitSoundRow").forEach((element) => { element.remove(); });
-
-    if (impacts == null)
-        setData("impacts", []);
-    else
-    {
-        impacts.forEach((_, index) =>
-        {
-            if (fs.existsSync(__dirname + "/" + impacts[index].location))
-            {
-                var row = document.querySelector("#bitSoundRow").cloneNode(true);
-                row.removeAttribute("id");
-                row.classList.add("bitSoundRow");
-                row.removeAttribute("hidden");
-                row.querySelector(".imageLabel").innerText = impacts[index].location.substr(impacts[index].location.lastIndexOf('/') + 1);
-                document.querySelector("#bitSoundTable").appendChild(row);
-
-                row.querySelector(".imageEnabled").checked = impacts[index].bits;
-                row.querySelector(".imageEnabled").addEventListener("change", () => {
-                    impacts[index].bits = row.querySelector(".imageEnabled").checked;
-                    setData("impacts", impacts);
-
-                    var allEnabled = true;
-                    for (var i = 0; i < impacts.length; i++)
-                    {
-                        if (!impacts[i].bits)
-                        {
-                            allEnabled = false;
-                            break;
-                        }
-                    }
-                    document.querySelector("#bitSoundTable").querySelector(".selectAll input").checked = allEnabled;
-                });
-            }
-            else
-            {
-                impacts.splice(index, 1);
-                setData("impacts", impacts);
-            }
-        });
-    }
-}
 
 document.querySelector("#bonksAdd").addEventListener("click", addBonk);
 
@@ -1454,186 +1251,223 @@ async function openTestBonks()
     }
 }
 
-document.querySelector("#redeemAdd").addEventListener("click", newRedeem);
+document.querySelector("#eventsAdd").addEventListener("click", newEvent);
 
 // Create a new redeem event
-async function newRedeem()
+async function newEvent()
 {
-    var redeems = await getData("redeems");
+    console.log("New Event creator triggered!");
+    var newEventNumber = 1;
+    var events = await getData("crowdControlEvents");
+    if (events == null)
+        events = {};
 
-    redeems.push({
+    while (events["CC Event " + newEventNumber] != null)
+        newEventNumber++;
+
+    events["CC Event " + newEventNumber] = {
         "enabled": true,
-        "id": null,
         "name": null,
-        "bonkType": "single"
-    });
+        "triggerName": null,
+        "triggerType": null,
+        "bonkEnabled": false,
+        "bonkType": "single",
+        "hotkeyEnabled": false,
+        "hotkeyName": null,
+        "secondHotkeyEnabled": false,
+        "secondHotkeyName": null,
+        "secondHotkeyDelay": 2500,
+        "expressionEnabled": false,
+        "expressionName": null,
+        "expressionDuration": 1000,
+    };
 
-    setData("redeems", redeems);
-
+    setData("crowdControlEvents", events);
     openEvents();
 }
 
-document.querySelector("#commandAdd").addEventListener("click", newCommand);
-
-// Create a new command event
-async function newCommand()
+async function eventDetails(eventName)
 {
-    var commands = await getData("commands");
+    console.log("Events details triggered!");
+    var customBonks = await getData("customBonks");
+    var events = await getData("crowdControlEvents");
 
-    commands.push({
-        "enabled": true,
-        "name": "",
-        "cooldown": 0,
-        "bonkType": "single"
-    });
+    if (events[eventName] != null)
+    {
+        showPanel("eventDetails", true);
 
-    setData("commands", commands);
+        // Copy new elements to remove all old listeners
+        var oldTable = document.querySelector("#eventDetailsTable");
+        var newTable = oldTable.cloneNode(true);
+        oldTable.after(newTable);
+        oldTable.remove();
 
-    openEvents();
+        const bonkDetailsTable = document.querySelector("#eventDetailsTable");
+
+        // Event Name
+        eventDetailsTable.querySelector(".eventName").value = eventName;
+        eventDetailsTable.querySelector(".eventName").addEventListener("change", async () => {
+            events = await getData("crowdControlEvents");
+            if (events[eventDetailsTable.querySelector(".eventName").value] == null)
+            {
+                events[eventDetailsTable.querySelector(".eventName").value] = events[eventName];
+                delete events[eventName];
+
+                eventName = eventDetailsTable.querySelector(".eventName").value;
+            }
+            else
+            {
+                // Error: Name exists
+            }
+            setData("crowdControlEvents", events);
+        });
+
+        //Enabled
+        eventDetailsTable.querySelector(".eventEnabled").checked = events[eventName].enabled;
+        eventDetailsTable.querySelector(".eventEnabled").addEventListener("change", async () => {
+            events = await getData("crowdControlEvents");
+            events[eventName].enabled = eventDetailsTable.querySelector(".eventEnabled").checked;
+            setData("crowdControlEvents", events);
+        });
+
+        //CC Event Name
+        eventDetailsTable.querySelector(".triggerName").value = events[eventName].triggerName;
+        eventDetailsTable.querySelector(".triggerName").addEventListener("change", async () => {
+            events = await getData("crowdControlEvents");
+            events[eventName].triggerName = eventDetailsTable.querySelector(".triggerName").value;
+            setData("crowdControlEvents", events);
+        });
+
+        //CC Event Type
+        eventDetailsTable.querySelector(".triggerType").value = events[eventName].triggerType;
+        eventDetailsTable.querySelector(".triggerType").addEventListener("change", async () => {
+            events = await getData("crowdControlEvents");
+            events[eventName].triggerType = eventDetailsTable.querySelector(".triggerType").value;
+            setData("crowdControlEvents", events);
+        });
+
+        //Bonk
+        eventDetailsTable.querySelector(".bonkEnabled").checked = events[eventName].bonkEnabled;
+        eventDetailsTable.querySelector(".bonkType").disabled = !events[eventName].bonkEnabled;
+        eventDetailsTable.querySelector(".bonkEnabled").addEventListener("change", async () => {
+            events = await getData("crowdControlEvents");
+            events[eventName].bonkEnabled = eventDetailsTable.querySelector(".bonkEnabled").checked;
+            eventDetailsTable.querySelector(".bonkType").disabled = !events[eventName].bonkEnabled;
+            setData("crowdControlEvents", events);
+        });
+
+        eventDetailsTable.querySelector(".bonkType").value = events[eventName].bonkType;
+        eventDetailsTable.querySelector(".bonkType").addEventListener("change", async () => {
+            events = await getData("crowdControlEvents");
+            events[eventName].bonkType = eventDetailsTable.querySelector(".bonkType").value;
+            setData("crowdControlEvents", events);
+        });
+
+        //Hotkey
+        eventDetailsTable.querySelector(".hotkeyEnabled").checked = events[eventName].hotkeyEnabled;
+        eventDetailsTable.querySelector(".hotkeyName").disabled = !events[eventName].hotkeyEnabled;
+        eventDetailsTable.querySelector(".hotkeyEnabled").addEventListener("change", async () => {
+            events = await getData("crowdControlEvents");
+            events[eventName].hotkeyEnabled = eventDetailsTable.querySelector(".hotkeyEnabled").checked;
+            eventDetailsTable.querySelector(".hotkeyName").disabled = !events[eventName].hotkeyEnabled;
+            setData("crowdControlEvents", events);
+        });
+
+        eventDetailsTable.querySelector(".hotkeyName").value = events[eventName].hotkeyName;
+        eventDetailsTable.querySelector(".hotkeyName").addEventListener("change", async () => {
+            events = await getData("crowdControlEvents");
+            events[eventName].hotkeyName = eventDetailsTable.querySelector(".hotkeyName").value;
+            setData("crowdControlEvents", events);
+        });
+
+        //Second Hotkey
+        eventDetailsTable.querySelector(".secondHotkeyEnabled").checked = events[eventName].secondHotkeyEnabled;
+        eventDetailsTable.querySelector(".secondHotkeyName").disabled = !events[eventName].secondHotkeyEnabled;
+        eventDetailsTable.querySelector(".secondHotkeyDelay").disabled = !events[eventName].secondHotkeyEnabled;
+        eventDetailsTable.querySelector(".secondHotkeyEnabled").addEventListener("change", async () => {
+            events = await getData("crowdControlEvents");
+            events[eventName].secondHotkeyEnabled = eventDetailsTable.querySelector(".secondHotkeyEnabled").checked;
+            eventDetailsTable.querySelector(".secondHotkeyName").disabled = !events[eventName].secondHotkeyEnabled;
+            eventDetailsTable.querySelector(".secondHotkeyDelay").disabled = !events[eventName].secondHotkeyEnabled;
+            setData("crowdControlEvents", events);
+        });
+
+        eventDetailsTable.querySelector(".secondHotkeyName").value = events[eventName].secondHotkeyName;
+        eventDetailsTable.querySelector(".secondHotkeyName").addEventListener("change", async () => {
+            events = await getData("crowdControlEvents");
+            events[eventName].secondHotkeyName = eventDetailsTable.querySelector(".secondHotkeyName").value;
+            setData("crowdControlEvents", events);
+        });
+
+        eventDetailsTable.querySelector(".secondHotkeyDelay").value = events[eventName].secondHotkeyDelay;
+        eventDetailsTable.querySelector(".secondHotkeyDelay").addEventListener("change", async () => {
+            events = await getData("crowdControlEvents");
+            events[eventName].secondHotkeyDelay = parseInt(eventDetailsTable.querySelector(".secondHotkeyDelay").value);
+            setData("crowdControlEvents", events);
+        });
+
+        //Expression
+        eventDetailsTable.querySelector(".expressionEnabled").checked = events[eventName].expressionEnabled;
+        eventDetailsTable.querySelector(".expressionName").disabled = !events[eventName].expressionEnabled;
+        eventDetailsTable.querySelector(".expressionDuration").disabled = !events[eventName].expressionEnabled;
+        eventDetailsTable.querySelector(".expressionEnabled").addEventListener("change", async () => {
+            events = await getData("crowdControlEvents");
+            events[eventName].expressionEnabled = eventDetailsTable.querySelector(".expressionEnabled").checked;
+            eventDetailsTable.querySelector(".expressionName").disabled = !events[eventName].expressionEnabled;
+            eventDetailsTable.querySelector(".expressionDuration").disabled = !events[eventName].expressionEnabled;
+            setData("crowdControlEvents", events);
+        });
+
+        eventDetailsTable.querySelector(".expressionName").value = events[eventName].expressionName;
+        eventDetailsTable.querySelector(".expressionName").addEventListener("change", async () => {
+            events = await getData("crowdControlEvents");
+            events[eventName].expressionName = eventDetailsTable.querySelector(".expressionName").value;
+            setData("crowdControlEvents", events);
+        });
+
+        eventDetailsTable.querySelector(".expressionDuration").value = events[eventName].expressionDuration;
+        eventDetailsTable.querySelector(".expressionDuration").addEventListener("change", async () => {
+            events = await getData("crowdControlEvents");
+            events[eventName].expressionDuration = parseInt(eventDetailsTable.querySelector(".expressionDuration").value);
+            setData("crowdControlEvents", events);
+        });
+
+    }
 }
-
-var gettingRedeemData = false, redeemData, cancelledGetRedeemData = false;
-async function getRedeemData()
-{
-    gettingRedeemData = true;
-    cancelledGetRedeemData = false;
-    ipcRenderer.send("listenRedeemStart");
-
-    while (gettingRedeemData)
-        await new Promise(resolve => setTimeout(resolve, 10));
-
-    return redeemData;
-}
-
-ipcRenderer.on("redeemData", (event, message) => {
-    redeemData = message;
-    gettingRedeemData = false;
-});
 
 async function openEvents()
 {
-    const customBonks = await getData("customBonks");
+    var events = await getData("crowdControlEvents");
+    console.log("Events tab opened!");
 
-    // Fill redeem rows
-    var redeems = await getData("redeems");
+    document.querySelectorAll(".ccEventRow").forEach(element => { element.remove(); });
 
-    document.querySelectorAll(".redeemsRow").forEach(element => { element.remove(); });
-
-    redeems.forEach((_, index) =>
+    if (events == null)
+        setData("crowdControlEvents", {});
+    else
     {
-        var row = document.querySelector("#redeemsRow").cloneNode(true);
-        row.removeAttribute("id");
-        row.classList.add("redeemsRow");
-        row.classList.remove("hidden");
-        document.querySelector("#redeemsRow").after(row);
-
-        row.querySelector(".redeemEnabled").checked = redeems[index].enabled;
-        row.querySelector(".redeemEnabled").addEventListener("change", () => {
-            redeems[index].enabled = row.querySelector(".redeemEnabled").checked;
-            setData("redeems", redeems);
-        });
-
-        row.querySelector(".redeemName").innerHTML = redeems[index].name == null ? "<b class=\"errorText\">Unassigned</b>" : redeems[index].name;
-        
-        row.querySelector(".redeemID").addEventListener("click", async () => {
-            row.querySelector(".redeemID").classList.add("hidden");
-            row.querySelector(".redeemCancel").classList.remove("hidden");
-            row.querySelector(".redeemName").innerText = "Listening...";
-            var data = await getRedeemData();
-            if (!cancelledGetRedeemData)
-            {
-                row.querySelector(".redeemID").classList.remove("hidden");
-                row.querySelector(".redeemCancel").classList.add("hidden");
-                redeems[index].id = data[0];
-                redeems[index].name = data[1];
-                row.querySelector(".redeemName").innerText = data[1];
-                setData("redeems", redeems);
-            }
-        });
-        
-        row.querySelector(".redeemCancel").addEventListener("click", async () => {
-            row.querySelector(".redeemID").classList.remove("hidden");
-            row.querySelector(".redeemCancel").classList.add("hidden");
-            
-            row.querySelector(".redeemName").innerHTML = redeems[index].name == null ? "<b class=\"errorText\">Unassigned</b>" : redeems[index].name;
-
-            cancelledGetRedeemData = true;
-            gettingRedeemData = false;
-            ipcRenderer.send("listenRedeemCancel");
-        });
-
-        for (var key in customBonks)
+        for (const key in events)
         {
-            var customBonk = document.createElement("option");
-            customBonk.value = key;
-            customBonk.innerText = key;
-            row.querySelector(".bonkType").appendChild(customBonk);
+            const row = document.querySelector("#ccEventRow").cloneNode(true);
+            row.removeAttribute("id");
+            row.removeAttribute("hidden");
+            row.classList.add("ccEventRow");
+            document.querySelector("#eventsTable").appendChild(row);
+
+            row.querySelector(".eventDetailsButton").addEventListener("click", () => {
+                eventDetails(key);
+            });
+
+            row.querySelector(".imageLabel").innerText = key;
+
+            row.querySelector(".imageRemove").addEventListener("click", async () => {
+                delete events[key];
+                setData("crowdControlEvents", events);
+
+                openEvents();
+            });
         }
-
-        row.querySelector(".bonkType").value = redeems[index].bonkType;
-        row.querySelector(".bonkType").addEventListener("change", () => {
-            redeems[index].bonkType = row.querySelector(".bonkType").value;
-            setData("redeems", redeems);
-        });
-
-        row.querySelector(".redeemRemove").addEventListener("click", () => {
-            redeems.splice(index, 1);
-            setData("redeems", redeems);
-            openEvents();
-        });
-    });
-
-    // Fill command rows
-    var commands = await getData("commands");
-
-    document.querySelectorAll(".commandsRow").forEach(element => { element.remove(); });
-    
-    commands.forEach((_, index) =>
-    {
-        var row = document.querySelector("#commandsRow").cloneNode(true);
-        row.removeAttribute("id");
-        row.classList.add("commandsRow");
-        row.classList.remove("hidden");
-        document.querySelector("#commandsRow").after(row);
-
-        row.querySelector(".commandEnabled").checked = commands[index].enabled;
-        row.querySelector(".commandEnabled").addEventListener("change", () => {
-            commands[index].enabled = row.querySelector(".commandEnabled").checked;
-            setData("commands", commands);
-        });
-
-        row.querySelector(".commandName").value = commands[index].name;
-        row.querySelector(".commandName").addEventListener("change", () => {
-            commands[index].name = row.querySelector(".commandName").value;
-            setData("commands", commands);
-        });
-
-        row.querySelector(".commandCooldown").value = commands[index].cooldown;
-        row.querySelector(".commandCooldown").addEventListener("change", () => {
-            commands[index].cooldown = row.querySelector(".commandCooldown").value;
-            setData("commands", commands);
-        });
-
-        for (var key in customBonks)
-        {
-            var customBonk = document.createElement("option");
-            customBonk.value = key;
-            customBonk.innerText = key;
-            row.querySelector(".bonkType").appendChild(customBonk);
-        }
-
-        row.querySelector(".bonkType").value = commands[index].bonkType;
-        row.querySelector(".bonkType").addEventListener("change", () => {
-            commands[index].bonkType = row.querySelector(".bonkType").value;
-            setData("commands", commands);
-        });
-
-        row.querySelector(".commandRemove").addEventListener("click", () => {
-            commands.splice(index, 1);
-            setData("commands", commands);
-            openEvents();
-        });
-    }); 
+    }
 }
 
 // ----
@@ -1735,8 +1569,6 @@ window.onload = async function()
     setData("throws", throws);
 
     var impacts = await getData("impacts");
-    var bitImpacts = await getData("bitImpacts");
-    var hasBitImpacts = bitImpacts != null && bitImpacts.length > 0;
     for (var i = 0; i < impacts.length; i++)
     {
         if (Array.isArray(impacts[i]))
@@ -1745,94 +1577,11 @@ window.onload = async function()
                 "location": impacts[i][0],
                 "volume": impacts[i][1],
                 "enabled": true,
-                "bits": !hasBitImpacts,
                 "customs": []
             };
         }
     }
     setData("impacts", impacts);
-
-    if (bitImpacts != null)
-    {
-        var impacts = await getData("impacts");
-        for (var i = 0; i < bitImpacts.length; i++)
-        {
-            impacts.push({
-                "location": bitImpacts[i][0],
-                "volume": bitImpacts[i][1],
-                "enabled": false,
-                "bits": true,
-                "customs": []
-            });
-        }
-
-        setData("bitImpacts", null);
-        setData("impacts", impacts);
-    }
-
-    var redeems = await getData("redeems");
-    if (redeems == null)
-    {
-        redeems = [];
-
-        var oldId = await getData("singleRedeemID");
-        var oldEnabled = await getData("singleRedeemEnabled");
-        if (oldId != null && oldId != "")
-        {
-            redeems.push({
-                "enabled": oldEnabled == null || !oldEnabled ? false : true,
-                "id": oldId,
-                "name": "Single",
-                "bonkType": "single"
-            });
-        }
-
-        oldId = await getData("barrageRedeemID");
-        oldEnabled = await getData("barrageRedeemEnabled");
-        if (oldId != null && oldId != "")
-        {
-            redeems.push({
-                "enabled": oldEnabled == null || !oldEnabled ? false : true,
-                "id": oldId,
-                "name": "Barrage",
-                "bonkType": "barrage"
-            });
-        }
-
-        setData("redeems", redeems);
-    }
-
-    var commands = await getData("commands");
-    if (commands == null)
-    {
-        commands = [];
-
-        var oldCommand = await getData("singleCommandTitle");
-        var oldEnabled = await getData("singleCommandEnabled");
-        if (oldCommand != null && oldCommand != "")
-        {
-            commands.push({
-                "enabled": oldEnabled == null || !oldEnabled ? false : true,
-                "name": oldCommand,
-                "cooldown": await getData("singleCommandCooldown"),
-                "bonkType": "single"
-            });
-        }
-
-        oldCommand = await getData("barrageCommandTitle");
-        oldEnabled = await getData("barrageCommandEnabled");
-        if (oldCommand != null && oldCommand != "")
-        {
-            commands.push({
-                "enabled": oldEnabled == null || !oldEnabled ? false : true,
-                "name": oldCommand,
-                "cooldown": await getData("singleCommandCooldown"),
-                "bonkType": "barrage"
-            });
-        }
-
-        setData("commands", commands);
-    }
 
     // UPDATE 1.12
     var customBonks = await getData("customBonks");
@@ -1858,25 +1607,6 @@ window.onload = async function()
 
     // END UPDATING
 
-    loadData("subEnabled");
-    loadData("subGiftEnabled");
-    loadData("bitsEnabled");
-    loadData("raidEnabled");
-
-    loadData("subType");
-    loadData("subGiftType");
-    loadData("bitsMinDonation");
-    loadData("bitsMaxBarrageCount");
-    loadData("raidMinBarrageCount");
-    loadData("raidMaxBarrageCount");
-
-    loadData("subCooldown");
-    loadData("subGiftCooldown");
-    loadData("bitsCooldown");
-    loadData("raidCooldown");
-    loadData("bitsOnlySingle");
-    loadData("raidEmotes");
-
     loadData("barrageCount");
     loadData("barrageFrequency");
     loadData("throwDuration");
@@ -1893,38 +1623,16 @@ window.onload = async function()
     loadData("volume");
     loadData("portThrower");
     loadData("portVTubeStudio");
+    loadData("cc_channel");
     loadData("minimizeToTray");
     
     openImages();
-    openBitImages();
 
     checkVersion();
     document.title += " " + version;
 }
 
 // Event listeners for changing settings
-document.querySelector("#subEnabled").addEventListener("change", () => setData("subEnabled", document.querySelector("#subEnabled").checked));
-document.querySelector("#subGiftEnabled").addEventListener("change", () => setData("subGiftEnabled", document.querySelector("#subGiftEnabled").checked));
-document.querySelector("#bitsEnabled").addEventListener("change", () => setData("bitsEnabled", document.querySelector("#bitsEnabled").checked));
-document.querySelector("#raidEnabled").addEventListener("change", () => setData("raidEnabled", document.querySelector("#raidEnabled").checked));
-
-document.querySelector("#subType").addEventListener("change", () => setData("subType", document.querySelector("#subType").value));
-document.querySelector("#subGiftType").addEventListener("change", () => setData("subGiftType", document.querySelector("#subGiftType").value));
-document.querySelector("#bitsMinDonation").addEventListener("change", () => { clampValue(document.querySelector("#bitsMinDonation"), 0, null); setData("bitsMinDonation", parseInt(document.querySelector("#bitsMinDonation").value)) });
-document.querySelector("#bitsMaxBarrageCount").addEventListener("change", () => { clampValue(document.querySelector("#bitsMaxBarrageCount"), 0, null); setData("bitsMaxBarrageCount", parseInt(document.querySelector("#bitsMaxBarrageCount").value)) });
-
-document.querySelector("#raidMinBarrageCount").addEventListener("change", () => { clampValue(document.querySelector("#raidMinBarrageCount"), 0, parseFloat(document.querySelector("#raidMaxBarrageCount").value)); setData("raidMinBarrageCount", parseInt(document.querySelector("#raidMinBarrageCount").value)) });
-document.querySelector("#raidMaxBarrageCount").addEventListener("change", () => { clampValue(document.querySelector("#raidMaxBarrageCount"), parseFloat(document.querySelector("#raidMinBarrageCount").value), null); setData("raidMaxBarrageCount", parseInt(document.querySelector("#raidMaxBarrageCount").value)) });
-
-document.querySelector("#subCooldown").addEventListener("change", () => { clampValue(document.querySelector("#subCooldown"), 0, null); setData("subCooldown", parseFloat(document.querySelector("#subCooldown").value)) });
-document.querySelector("#subGiftCooldown").addEventListener("change", () => { clampValue(document.querySelector("#subGiftCooldown"), 0, null); setData("subGiftCooldown", parseFloat(document.querySelector("#subGiftCooldown").value)) });
-document.querySelector("#bitsCooldown").addEventListener("change", () => { clampValue(document.querySelector("#bitsCooldown"), 0, null); setData("bitsCooldown", parseFloat(document.querySelector("#bitsCooldown").value)) });
-document.querySelector("#raidCooldown").addEventListener("change", () => { clampValue(document.querySelector("#raidCooldown"), 0, null); setData("raidCooldown", parseFloat(document.querySelector("#raidCooldown").value)) });
-document.querySelector("#raidEnabled").addEventListener("change", () => setData("raidEnabled", document.querySelector("#raidEnabled").checked));
-
-document.querySelector("#bitsOnlySingle").addEventListener("change", () => setData("bitsOnlySingle", document.querySelector("#bitsOnlySingle").checked));
-document.querySelector("#raidEmotes").addEventListener("change", () => setData("raidEmotes", document.querySelector("#raidEmotes").checked));
-
 document.querySelector("#barrageCount").addEventListener("change", () => { clampValue(document.querySelector("#barrageCount"), 0, null); setData("barrageCount", parseInt(document.querySelector("#barrageCount").value)) });
 document.querySelector("#barrageFrequency").addEventListener("change", () => { clampValue(document.querySelector("#barrageFrequency"), 0, null); setData("barrageFrequency", parseFloat(document.querySelector("#barrageFrequency").value)) });
 document.querySelector("#throwDuration").addEventListener("change", () => { clampValue(document.querySelector("#throwDuration"), 0.1, null); setData("throwDuration", parseFloat(document.querySelector("#throwDuration").value)) });
@@ -1960,6 +1668,7 @@ document.querySelector("#delay").addEventListener("change", () => { clampValue(d
 document.querySelector("#volume").addEventListener("change", () => { clampValue(document.querySelector("#volume"), 0, 1); setData("volume", parseFloat(document.querySelector("#volume").value)) });
 document.querySelector("#portThrower").addEventListener("change", () => setData("portThrower", parseInt(document.querySelector("#portThrower").value)));
 document.querySelector("#portVTubeStudio").addEventListener("change", () => setData("portVTubeStudio", parseInt(document.querySelector("#portVTubeStudio").value)));
+document.querySelector("#cc_channel").addEventListener("change", () => setData("cc_channel", parseInt(document.querySelector("#cc_channel").value)));
 document.querySelector("#minimizeToTray").addEventListener("change", () => setData("minimizeToTray", document.querySelector("#minimizeToTray").checked));
 
 function clampValue(node, min, max)
@@ -1981,7 +1690,6 @@ var currentPanel = document.querySelector("#bonkImages"), playing = false;
 // Window Event Listeners
 document.querySelector("#header").addEventListener("click", () => { showPanelLarge("statusWindow"); });
 
-document.querySelector("#helpButton").addEventListener("click", () => { ipcRenderer.send("help"); });
 document.querySelector("#calibrateButton").addEventListener("click", () => { showPanelLarge("statusWindow", true); });
 document.querySelector("#settingsButton").addEventListener("click", () => { showPanelLarge("settings"); });
 document.querySelector("#testBonksButton").addEventListener("click", () => { showPanelLarge("testBonks"); });
@@ -1991,20 +1699,12 @@ document.querySelector("#soundsButton").addEventListener("click", () => { showPa
 document.querySelector("#customButton").addEventListener("click", () => { showPanel("customBonks"); });
 document.querySelector("#eventsButton").addEventListener("click", () => { showPanel("events"); });
 
-document.querySelector("#imagesDefaultTab").addEventListener("click", () => { showTab("imageTable", [ "bitImageTable" ], "imagesDefaultTab", [ "imagesBitsTab" ]); });
-document.querySelector("#imagesBitsTab").addEventListener("click", () => { showTab("bitImageTable", [ "imageTable" ], "imagesBitsTab", [ "imagesDefaultTab" ]); });
-
-document.querySelector("#soundsDefaultTab").addEventListener("click", () => { showTab("soundTable", [ "bitSoundTable" ], "soundsDefaultTab", [ "soundsBitsTab" ]); });
-document.querySelector("#soundsBitsTab").addEventListener("click", () => { showTab("bitSoundTable", [ "soundTable" ], "soundsBitsTab", [ "soundsDefaultTab" ]); });
-
 document.querySelectorAll(".windowBack").forEach((element) => { element.addEventListener("click", () => { back(); }) });
 
 function showTab(show, hide, select, deselect)
 {
     if (show == "soundTable")
         openSounds();
-    else if (show == "bitSoundTable")
-        openBitSounds();
 
     for (var i = 0; i < hide.length; i++)
         document.querySelector("#" + hide[i]).classList.add("hidden");
@@ -2127,7 +1827,6 @@ function showPanel(panel, stack)
                 {
                     document.querySelector("#soundsButton").querySelector(".overlayButton").classList.add("buttonSelected");
                     openSounds();
-                    openBitSounds();
                 }
                 else if (panel == "customBonks")
                 {
@@ -2222,26 +1921,6 @@ function showPanelLarge(panel)
     }
 }
 
-// In response to raid event from main process.
-// Do the HTTP request here, since it"s already a browser of sorts, and send the response back.
-ipcRenderer.on("raid", (event, message) => { getRaidEmotes(event, message); });
-function getRaidEmotes(_, data)
-{
-  var channelEmotes = new XMLHttpRequest();
-  channelEmotes.onreadystatechange = function() {
-      if (this.readyState == 4 && this.status == 200)
-      {
-          const emotes = JSON.parse(this.responseText);
-          ipcRenderer.send("emotes", emotes);
-      }
-  };
-  // Open the request and send it.
-  channelEmotes.open("GET", "https://api.twitch.tv/helix/chat/emotes?broadcaster_id=" + data[0], true);
-  channelEmotes.setRequestHeader("Authorization", "Bearer " + data[1]);
-  channelEmotes.setRequestHeader("Client-Id", "u4rwa52hwkkgyoyow0t3gywxyv54pg");
-  channelEmotes.send();
-}
-
 function checkVersion()
 {
     var versionRequest = new XMLHttpRequest();
@@ -2254,7 +1933,7 @@ function checkVersion()
         }
     };
     // Open the request and send it.
-    versionRequest.open("GET", "https://itch.io/api/1/x/wharf/latest?target=typeou/karasubonk&channel_name=win32", true);
+    versionRequest.open("GET", "https://itch.io/api/1/x/wharf/latest?target=jayo89/jayobonk&channel_name=win32", true);
     versionRequest.send();
 }
 
@@ -2264,8 +1943,6 @@ function checkVersion()
 
 document.querySelector("#testSingle").addEventListener("click", () => { ipcRenderer.send("single"); });
 document.querySelector("#testBarrage").addEventListener("click", () => { ipcRenderer.send("barrage"); });
-document.querySelector("#testBits").addEventListener("click", () => { ipcRenderer.send("bits"); });
-document.querySelector("#testRaid").addEventListener("click", () => { ipcRenderer.send("raid"); });
 
 document.querySelector("#calibrateButton").addEventListener("click", () => { if (!cancelCalibrate) ipcRenderer.send("startCalibrate"); });
 document.querySelector("#nextCalibrate").addEventListener("click", () => { ipcRenderer.send("nextCalibrate"); });
