@@ -355,7 +355,8 @@
             "soundsOverride": false,
             "impactDecals": [],
             "windupSounds": [],
-            "windupDelay": 0
+            "windupDelay": 0,
+            "throwAway": false
         },
         "Coins": {
             "barrageCount": 30,

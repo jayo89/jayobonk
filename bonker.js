@@ -291,6 +291,8 @@ function connectBridge()
                             data.data.barrageFrequency = data.data.customBonks[data.type].barrageFrequency;
                         if (data.data.customBonks[data.type].throwDurationOverride)
                             data.data.throwDuration = data.data.customBonks[data.type].throwDuration;
+                        if (data.data.customBonks[data.type].throwAway)
+                            data.data.throwAway = data.data.customBonks[data.type].throwAway;
                         if (data.data.customBonks[data.type].throwAngleOverride)
                         {
                             data.data.throwAngleMin = data.data.customBonks[data.type].throwAngleMin;
@@ -478,6 +480,7 @@ function bonk(image, weight, scale, sound, volume, data, faceWidthMin, faceWidth
         socketVTube.onmessage = function(event)
         {
             const pos = JSON.parse(event.data).data.modelPosition;
+            const throwAway = data.throwAway;
             if (pos != null)
             {
                 const offsetX = faceWidthMin + (((pos.size + 100) / 200) * (faceWidthMax - faceWidthMin));
@@ -541,7 +544,7 @@ function bonk(image, weight, scale, sound, volume, data, faceWidthMin, faceWidth
                     pivot.style.transform = "rotate(" + angle + "deg)";
                     var movement = document.createElement("div");
                     movement.classList.add("animated");
-                    var animName = "throw" + (fromLeft ? "Left" : "Right");
+                    var animName = (throwAway ? "away" : "throw") + (fromLeft ? "Left" : "Right");
                     movement.style.animationName = animName;
                     movement.style.animationDuration = data.throwDuration + "s";
                     movement.style.animationDelay = (data.delay / 1000) + "s";
@@ -564,10 +567,16 @@ function bonk(image, weight, scale, sound, volume, data, faceWidthMin, faceWidth
                     root.appendChild(pivot);
                     document.querySelector("body").appendChild(root);
                     
-                    setTimeout(function() { flinch(multH, angle, weight, data.parametersHorizontal, data.parametersVertical, data.returnSpeed, eyeState); }, data.throwDuration * 500, data.throwAngleMin, data.throwAngleMax);
+                    if(!throwAway) {
+                        setTimeout(function() { flinch(multH, angle, weight, data.parametersHorizontal, data.parametersVertical, data.returnSpeed, eyeState); }, data.throwDuration * 500, data.throwAngleMin, data.throwAngleMax);
+                    }
                 
                     if (sound != null)
-                        setTimeout(function() { audio.play(); }, (data.throwDuration * 500) + data.delay);
+                        var soundDelay = data.throwDuration * 500;
+                        if(throwAway) {
+                            soundDelay = 10;
+                        }
+                        setTimeout(function() { audio.play(); }, (soundDelay) + data.delay);
                 
                     if (impactDecal != null)
                         setTimeout(function() {

@@ -922,7 +922,8 @@ async function addBonk()
         "soundsOverride": false,
         "impactDecals": [],
         "windupSounds": [],
-        "windupDelay": 0
+        "windupDelay": 0,
+        "throwAway": false
     };
 
     setData("customBonks", customBonks);
@@ -1003,6 +1004,14 @@ async function bonkDetails(customBonkName)
         bonkDetailsTable.querySelector(".barrageCount").addEventListener("change", async () => {
             customBonks = await getData("customBonks");
             customBonks[customBonkName].barrageCount = parseInt(bonkDetailsTable.querySelector(".barrageCount").value);
+            setData("customBonks", customBonks);
+        });
+
+        //Throw Away Instead
+        bonkDetailsTable.querySelector(".throwAway").checked = customBonks[customBonkName].throwAway;
+        bonkDetailsTable.querySelector(".throwAway").addEventListener("change", async () => {
+            customBonks = await getData("customBonks");
+            customBonks[customBonkName].throwAway = bonkDetailsTable.querySelector(".throwAway").checked;
             setData("customBonks", customBonks);
         });
 
