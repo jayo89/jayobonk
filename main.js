@@ -2,7 +2,6 @@ const { app, Menu, Tray, BrowserWindow, ipcMain } = require("electron");
 const fs = require("fs");
 const WebSocket = require("ws");
 const { io } = require("socket.io-client");
-const { WebSocketBus, ApiClient, Plugin } = require("vtubestudio");
 const VtubeStudioAgent = require('./vtubeStudioAgent');
 
 var mainWindow;
@@ -275,7 +274,7 @@ async function checkCrowdControlEvent(event) {
     var matchedEvent = null;
     Object.entries(customEvents).forEach(item => {
       const [key, customEvent] = item;
-      if(event.effect == customEvent.triggerName && event.type == customEvent.triggerType) {
+      if(event.effect == customEvent.triggerName && event.type == customEvent.triggerType && customEvent.enabled == true) {
         matchedEvent = customEvent;
         console.log('Found a matching event: ' + key);
       }
