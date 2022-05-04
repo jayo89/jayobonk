@@ -265,48 +265,53 @@ function createCrowdControlConnection()
 // VTube Studio Connection
 // ----------------
 const vts = new VtubeStudioAgent(data.portVTubeStudio);
-
+var lastCrowdControlEventId = '';
 async function checkCrowdControlEvent(event) {
+  //console.log(event);
   if(event.hasOwnProperty("effect")) {
-    console.log(`Event intercepted: "${event.effectName}" (effect "${event.effect}", type "${event.type}")`);
+    if (lastCrowdControlEventId != event.id+"-"+event.state) {
+      lastCrowdControlEventId = event.id+"-"+event.state;
+      console.log(`Event intercepted: "${event.effectName}" (effect "${event.effect}", type "${event.type}")`);
 
-    var customEvents = await getData("crowdControlEvents");
-    var matchedEvent = null;
-    Object.entries(customEvents).forEach(item => {
-      const [key, customEvent] = item;
-      if(event.effect == customEvent.triggerName && event.type == customEvent.triggerType && customEvent.enabled == true) {
-        matchedEvent = customEvent;
-        console.log('Found a matching event: ' + key);
-      }
-    });
-
-    if(matchedEvent) {
-      //Execute the bonk if enabled
-      if(matchedEvent.bonkEnabled && matchedEvent.bonkType.length > 0) {
-        custom(matchedEvent.bonkType);
-      }
-
-      //Execute the hotkey(s) if enabled
-      if(matchedEvent.hotkeyEnabled && matchedEvent.hotkeyName.length > 0) {
-        //Trigger the selected hotkey
-        vts.triggerHotkey(matchedEvent.hotkeyName);
-        if(matchedEvent.secondHotkeyEnabled && matchedEvent.secondHotkeyName.length > 0) {
-          //Trigger the follow-up hotkey after the specified delay
-          setTimeout(() => {vts.triggerHotkey(matchedEvent.secondHotkeyName)},matchedEvent.secondHotkeyDelay);
+      var customEvents = await getData("crowdControlEvents");
+      var matchedEvent = null;
+      Object.entries(customEvents).forEach(item => {
+        const [key, customEvent] = item;
+        if(event.effect == customEvent.triggerName && event.type == customEvent.triggerType && customEvent.enabled == true) {
+          matchedEvent = customEvent;
+          console.log('Found a matching event: ' + key);
         }
-      }
+      });
 
-      //Execute the expression if enabled
-      if(matchedEvent.expressionEnabled && matchedEvent.expressionName.length > 0) {
-        //Activate selected expression
-        vts.activateExpression(matchedEvent.expressionName);
-        if(parseInt(matchedEvent.expressionDuration) > 0) {
-          //Deactivate expression after the listed duration
-          setTimeout(() => {vts.deactivateExpression(matchedEvent.expressionName)},matchedEvent.expressionDuration);
+      if(matchedEvent) {
+        //Execute the bonk if enabled
+        if(matchedEvent.bonkEnabled && matchedEvent.bonkType.length > 0) {
+          custom(matchedEvent.bonkType);
         }
-      }
 
+        //Execute the hotkey(s) if enabled
+        if(matchedEvent.hotkeyEnabled && matchedEvent.hotkeyName.length > 0) {
+          //Trigger the selected hotkey
+          vts.triggerHotkey(matchedEvent.hotkeyName);
+          if(matchedEvent.secondHotkeyEnabled && matchedEvent.secondHotkeyName.length > 0) {
+            //Trigger the follow-up hotkey after the specified delay
+            setTimeout(() => {vts.triggerHotkey(matchedEvent.secondHotkeyName)},matchedEvent.secondHotkeyDelay);
+          }
+        }
+
+        //Execute the expression if enabled
+        if(matchedEvent.expressionEnabled && matchedEvent.expressionName.length > 0) {
+          //Activate selected expression
+          vts.activateExpression(matchedEvent.expressionName);
+          if(parseInt(matchedEvent.expressionDuration) > 0) {
+            //Deactivate expression after the listed duration
+            setTimeout(() => {vts.deactivateExpression(matchedEvent.expressionName)},matchedEvent.expressionDuration);
+          }
+        }
+
+      }
     }
+
   }
   if(event.type === "refresh") {
     console.log("Refresh command received! (This is typically used to clear the overlay.)");

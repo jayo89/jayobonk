@@ -1,5 +1,6 @@
 const { ipcRenderer } = require("electron");
 const fs = require("fs");
+const axios = require("axios");
 
 const version = 0.1;
 
@@ -1278,6 +1279,8 @@ async function newEvent()
         "enabled": true,
         "name": null,
         "triggerName": null,
+        "crowdControlGame": 9,
+        "crowdControlEffect": 1,
         "triggerType": null,
         "bonkEnabled": false,
         "bonkType": "single",
@@ -1311,7 +1314,7 @@ async function eventDetails(eventName)
         oldTable.after(newTable);
         oldTable.remove();
 
-        const bonkDetailsTable = document.querySelector("#eventDetailsTable");
+        const eventDetailsTable = document.querySelector("#eventDetailsTable");
 
         // Event Name
         eventDetailsTable.querySelector(".eventName").value = eventName;
@@ -1338,6 +1341,37 @@ async function eventDetails(eventName)
             events[eventName].enabled = eventDetailsTable.querySelector(".eventEnabled").checked;
             setData("crowdControlEvents", events);
         });
+
+        //CC Game and effect
+
+        var ccGameBox = eventDetailsTable.querySelector(".crowdControlGame");
+
+        while (ccGameBox.options.length > 0) {
+            ccGameBox.remove(0);
+        }
+        crowdControlGames.forEach(gameEntry => {
+           ccGameBox.add(new Option(gameEntry.name, gameEntry.menuID));
+        });
+        ccGameBox.value = events[eventName].crowdControlGame;
+        eventDetailsTable.querySelector(".crowdControlGame").addEventListener("change", async () => {
+            events = await getData("crowdControlEvents");
+            events[eventName].crowdControlGame = eventDetailsTable.querySelector(".crowdControlGame").value;
+            setData("crowdControlEvents", events);
+            await getCrowdControlGame(events[eventName].crowdControlGame, events[eventName].crowdControlEffect);
+        });
+
+        if(events[eventName].crowdControlEffect) {
+            await getCrowdControlGame(events[eventName].crowdControlGame, events[eventName].crowdControlEffect);
+        }
+
+        eventDetailsTable.querySelector(".crowdControlEffect").addEventListener("change", async () => {
+            events = await getData("crowdControlEvents");
+            events[eventName].crowdControlEffect = eventDetailsTable.querySelector(".crowdControlEffect").value;
+            setData("crowdControlEvents", events);
+            await getCrowdControlEffect(events[eventName].crowdControlGame, events[eventName].crowdControlEffect);
+        });
+
+        //CC Effect
 
         //CC Event Name
         eventDetailsTable.querySelector(".triggerName").value = events[eventName].triggerName;
@@ -1555,6 +1589,53 @@ async function loadData(field)
     }
 }
 
+var crowdControlGames = {};
+
+function getCrowdControlGames() {
+    axios.get("https://api.crowdcontrol.live/available_games")
+        .then((response) => {
+            crowdControlGames = response.data;
+        })
+        .catch(function (e) {
+            console.log(e);
+        });
+}
+
+async function getCrowdControlGame(game_id,value) {
+    const eventDetailsTable = document.querySelector("#eventDetailsTable");
+    var ccEffectBox = eventDetailsTable.querySelector(".crowdControlEffect");
+    var ccEffectList = [];
+    while (ccEffectBox.options.length > 0) {
+        ccEffectBox.remove(0);
+    }
+    console.log("Checking " + "https://api.crowdcontrol.live/menu/"+game_id);
+    axios.get("https://api.crowdcontrol.live/menu/"+game_id).then(response => {
+        ccEffectList = response.data.menu.items;
+        ccEffectList.forEach(effectEntry => {
+            ccEffectBox.add(new Option(effectEntry.name, effectEntry.bid));
+        });
+        ccEffectBox.value = value;
+        return true;
+    }).catch(e => {console.log(e); return null; });
+}
+
+async function getCrowdControlEffect(game_id, value) {
+    const eventDetailsTable = document.querySelector("#eventDetailsTable");
+    var ccEffectList = [];
+    console.log("Checking " + "https://api.crowdcontrol.live/menu/"+game_id);
+    axios.get("https://api.crowdcontrol.live/menu/"+game_id).then(response => {
+        ccEffectList = response.data.menu.items;
+        ccEffectList.forEach(effectEntry => {
+            if(effectEntry.bid == value) {
+                eventDetailsTable.querySelector(".triggerName").value = effectEntry.safeName;
+                eventDetailsTable.querySelector(".triggerName").dispatchEvent(new Event("change"));
+            }
+        });
+        return true;
+    }).catch(e => {console.log(e); return null; });
+
+}
+
 // Place all settings from data into the proper location on load
 window.onload = async function()
 {
@@ -1615,6 +1696,8 @@ window.onload = async function()
         setData("minimizeToTray", false);
 
     // END UPDATING
+
+    getCrowdControlGames();
 
     loadData("barrageCount");
     loadData("barrageFrequency");

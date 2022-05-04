@@ -4,6 +4,7 @@
   "description": "Modified, CrowdControl-integrated item thrower for Live2D models.",
   "main": "main.js",
   "dependencies": {
+    "axios": "^0.27.2",
     "electron-squirrel-startup": "^1.0.0",
     "socket.io-client": "^4.5.0",
     "vtubestudio": "^1.10.0",
@@ -22,7 +23,7 @@
     "package": "electron-forge package",
     "make": "electron-forge make"
   },
-  "author": "typeou",
+  "author": "jayo",
   "license": "MIT",
   "config": {
     "forge": {

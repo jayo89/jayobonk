@@ -4,6 +4,32 @@
     "portVTubeStudio": 8001,
     "throws": [
         {
+            "enabled": false,
+            "location": "throws/lttp-bomb.png",
+            "weight": 1,
+            "scale": 0.4,
+            "sound": null,
+            "volume": 1,
+            "customs": [
+                "Add Bombs",
+                "Infinite Bombs",
+                "Take Bombs"
+            ]
+        },
+        {
+            "enabled": false,
+            "location": "throws/lttp-arrow.png",
+            "weight": 1,
+            "scale": 0.4,
+            "sound": null,
+            "volume": 1,
+            "customs": [
+                "Add Arrows",
+                "Take Arrows",
+                "Infinite Arrows"
+            ]
+        },
+        {
             "enabled": true,
             "location": "throws/Cucco-Sprite.png",
             "weight": 0.2,
@@ -11,7 +37,7 @@
             "sound": "impacts/cucco.mp3",
             "volume": 1,
             "customs": [
-                "Cucco 10s"
+
             ]
         },
         {
@@ -22,7 +48,7 @@
             "sound": "impacts/smrpg_coinfrog.wav",
             "volume": 1,
             "customs": [
-                "Coins"
+
             ]
         },
         {
@@ -33,7 +59,7 @@
             "sound": "impacts/smrpg_coin.wav",
             "volume": 1,
             "customs": [
-                "Coins"
+
             ]
         },
         {
@@ -44,7 +70,7 @@
             "sound": "impacts/smw_coin.wav",
             "volume": 1,
             "customs": [
-                "Coins"
+
             ]
         },
         {
@@ -55,7 +81,8 @@
             "sound": "impacts/rupee.mp3",
             "volume": 1,
             "customs": [
-                "LttP"
+                "Add Rupees",
+                "Take Rupees"
             ]
         },
         {
@@ -66,8 +93,7 @@
             "sound": "impacts/heart.mp3",
             "volume": 1,
             "customs": [
-                "Hydrate",
-                "LttP"
+                "Hydrate"
             ]
         },
         {
@@ -78,7 +104,7 @@
             "sound": "impacts/heart.mp3",
             "volume": 1,
             "customs": [
-                "LttP"
+                "Recovery Heart"
             ]
         },
         {
@@ -89,7 +115,8 @@
             "sound": "impacts/magic-meter.mp3",
             "volume": 1,
             "customs": [
-                "LttP"
+                "Infinite Magic",
+                "Small Magic"
             ]
         },
         {
@@ -100,7 +127,8 @@
             "sound": "impacts/magic-meter.mp3",
             "volume": 1,
             "customs": [
-                "LttP"
+                "Infinite Magic",
+                "Big Magic"
             ]
         },
         {
@@ -111,7 +139,8 @@
             "sound": "impacts/rupee.mp3",
             "volume": 1,
             "customs": [
-                "LttP"
+                "Add Rupees",
+                "Take Rupees"
             ]
         },
         {
@@ -123,7 +152,7 @@
             "volume": 1,
             "customs": [
                 "Hydrate",
-                "LttP"
+                "Infinite Magic"
             ]
         },
         {
@@ -134,8 +163,7 @@
             "sound": "impacts/cucco.mp3",
             "volume": 1,
             "customs": [
-                "LttP",
-                "Cucco 10s"
+                "Cucco Attack"
             ]
         },
         {
@@ -146,7 +174,8 @@
             "sound": "impacts/rupee.mp3",
             "volume": 1,
             "customs": [
-                "LttP"
+                "Add Rupees",
+                "Take Rupees"
             ]
         },
         {
@@ -157,8 +186,7 @@
             "sound": "impacts/life-refill2.mp3",
             "volume": 1,
             "customs": [
-                "Hydrate",
-                "LttP"
+                "Hydrate"
             ]
         }
     ],
@@ -167,55 +195,73 @@
             "location": "impacts/life-refill.mp3",
             "volume": 1,
             "enabled": false,
-            "customs": []
+            "customs": [
+
+            ]
         },
         {
             "location": "impacts/smrpg_coinfrog.wav",
             "volume": 1,
             "enabled": false,
-            "customs": []
+            "customs": [
+
+            ]
         },
         {
             "location": "impacts/smrpg_coin.wav",
             "volume": 1,
             "enabled": false,
-            "customs": []
+            "customs": [
+
+            ]
         },
         {
             "location": "impacts/smw_dragon_coin.wav",
             "volume": 1,
             "enabled": false,
-            "customs": []
+            "customs": [
+
+            ]
         },
         {
             "location": "impacts/smw_coin.wav",
             "volume": 1,
             "enabled": false,
-            "customs": []
+            "customs": [
+
+            ]
         },
         {
             "location": "impacts/rupee.mp3",
             "volume": 1,
             "enabled": false,
-            "customs": []
+            "customs": [
+
+            ]
         },
         {
             "location": "impacts/magic-meter.mp3",
             "volume": 1,
             "enabled": false,
-            "customs": []
+            "customs": [
+
+            ]
         },
         {
             "location": "impacts/heart.mp3",
             "volume": 1,
             "enabled": false,
-            "customs": []
+            "customs": [
+
+            ]
         },
         {
             "location": "impacts/cucco.mp3",
             "volume": 1,
             "enabled": false,
-            "customs": []
+            "customs": [
+
+            ]
         },
         {
             "location": "impacts/Seq1.15 Hit #3 96 HK1.wav",
@@ -224,9 +270,19 @@
             "bits": true,
             "customs": [
                 "Hydrate",
-                "Coins",
-                "LttP",
-                "Cucco 10s"
+                "Add Arrows",
+                "Take Arrows",
+                "Add Bombs",
+                "Take Bombs",
+                "Add Rupees",
+                "Take Rupees",
+                "Infinite Arrows",
+                "Infinite Bombs",
+                "Infinite Magic",
+                "Recovery Heart",
+                "Small Magic",
+                "Big Magic",
+                "Cucco Attack"
             ]
         },
         {
@@ -236,9 +292,19 @@
             "bits": true,
             "customs": [
                 "Hydrate",
-                "Coins",
-                "LttP",
-                "Cucco 10s"
+                "Add Arrows",
+                "Take Arrows",
+                "Add Bombs",
+                "Take Bombs",
+                "Add Rupees",
+                "Take Rupees",
+                "Infinite Arrows",
+                "Infinite Bombs",
+                "Infinite Magic",
+                "Recovery Heart",
+                "Small Magic",
+                "Big Magic",
+                "Cucco Attack"
             ]
         },
         {
@@ -248,9 +314,19 @@
             "bits": true,
             "customs": [
                 "Hydrate",
-                "Coins",
-                "LttP",
-                "Cucco 10s"
+                "Add Arrows",
+                "Take Arrows",
+                "Add Bombs",
+                "Take Bombs",
+                "Add Rupees",
+                "Take Rupees",
+                "Infinite Arrows",
+                "Infinite Bombs",
+                "Infinite Magic",
+                "Recovery Heart",
+                "Small Magic",
+                "Big Magic",
+                "Cucco Attack"
             ]
         },
         {
@@ -260,9 +336,19 @@
             "bits": true,
             "customs": [
                 "Hydrate",
-                "Coins",
-                "LttP",
-                "Cucco 10s"
+                "Add Arrows",
+                "Take Arrows",
+                "Add Bombs",
+                "Take Bombs",
+                "Add Rupees",
+                "Take Rupees",
+                "Infinite Arrows",
+                "Infinite Bombs",
+                "Infinite Magic",
+                "Recovery Heart",
+                "Small Magic",
+                "Big Magic",
+                "Cucco Attack"
             ]
         },
         {
@@ -272,9 +358,19 @@
             "bits": true,
             "customs": [
                 "Hydrate",
-                "Coins",
-                "LttP",
-                "Cucco 10s"
+                "Add Arrows",
+                "Take Arrows",
+                "Add Bombs",
+                "Take Bombs",
+                "Add Rupees",
+                "Take Rupees",
+                "Infinite Arrows",
+                "Infinite Bombs",
+                "Infinite Magic",
+                "Recovery Heart",
+                "Small Magic",
+                "Big Magic",
+                "Cucco Attack"
             ]
         },
         {
@@ -284,9 +380,19 @@
             "bits": true,
             "customs": [
                 "Hydrate",
-                "Coins",
-                "LttP",
-                "Cucco 10s"
+                "Add Arrows",
+                "Take Arrows",
+                "Add Bombs",
+                "Take Bombs",
+                "Add Rupees",
+                "Take Rupees",
+                "Infinite Arrows",
+                "Infinite Bombs",
+                "Infinite Magic",
+                "Recovery Heart",
+                "Small Magic",
+                "Big Magic",
+                "Cucco Attack"
             ]
         },
         {
@@ -296,9 +402,19 @@
             "bits": true,
             "customs": [
                 "Hydrate",
-                "Coins",
-                "LttP",
-                "Cucco 10s"
+                "Add Arrows",
+                "Take Arrows",
+                "Add Bombs",
+                "Take Bombs",
+                "Add Rupees",
+                "Take Rupees",
+                "Infinite Arrows",
+                "Infinite Bombs",
+                "Infinite Magic",
+                "Recovery Heart",
+                "Small Magic",
+                "Big Magic",
+                "Cucco Attack"
             ]
         },
         {
@@ -308,9 +424,19 @@
             "bits": true,
             "customs": [
                 "Hydrate",
-                "Coins",
-                "LttP",
-                "Cucco 10s"
+                "Add Arrows",
+                "Take Arrows",
+                "Add Bombs",
+                "Take Bombs",
+                "Add Rupees",
+                "Take Rupees",
+                "Infinite Arrows",
+                "Infinite Bombs",
+                "Infinite Magic",
+                "Recovery Heart",
+                "Small Magic",
+                "Big Magic",
+                "Cucco Attack"
             ]
         },
         {
@@ -320,9 +446,19 @@
             "bits": true,
             "customs": [
                 "Hydrate",
-                "Coins",
-                "LttP",
-                "Cucco 10s"
+                "Add Arrows",
+                "Take Arrows",
+                "Add Bombs",
+                "Take Bombs",
+                "Add Rupees",
+                "Take Rupees",
+                "Infinite Arrows",
+                "Infinite Bombs",
+                "Infinite Magic",
+                "Recovery Heart",
+                "Small Magic",
+                "Big Magic",
+                "Cucco Attack"
             ]
         }
     ],
@@ -353,80 +489,584 @@
             "throwAngleMax": 45,
             "itemsOverride": true,
             "soundsOverride": false,
-            "impactDecals": [],
-            "windupSounds": [],
-            "windupDelay": 0,
-            "throwAway": false
-        },
-        "Coins": {
-            "barrageCount": 30,
-            "barrageFrequencyOverride": true,
-            "barrageFrequency": 0.075,
-            "throwDurationOverride": true,
-            "throwDuration": 3,
-            "throwAngleOverride": false,
-            "throwAngleMin": -45,
-            "throwAngleMax": 45,
-            "spinSpeedMin": 5,
-            "spinSpeedMax": 10,
-            "itemsOverride": true,
-            "soundsOverride": false,
-            "impactDecals": [],
-            "windupSounds": [],
+            "impactDecals": [
+
+            ],
+            "windupSounds": [
+
+            ],
             "windupDelay": 0
         },
-        "LttP": {
-            "barrageCount": 60,
-            "barrageFrequencyOverride": true,
-            "barrageFrequency": 0.08,
-            "throwDurationOverride": true,
-            "throwDuration": 2.5,
+        "Add Arrows": {
+            "barrageCount": 10,
+            "barrageFrequencyOverride": false,
+            "barrageFrequency": 0.1,
+            "throwDurationOverride": false,
+            "throwDuration": 1,
             "throwAngleOverride": false,
-            "throwAngleMin": -45,
-            "throwAngleMax": 45,
-            "spinSpeedMin": 5,
-            "spinSpeedMax": 10,
-            "itemsOverride": true,
-            "soundsOverride": false,
-            "impactDecals": [],
-            "windupSounds": [],
-            "windupDelay": 0
-        },
-        "Cucco 10s": {
-            "barrageCount": 30,
-            "barrageFrequencyOverride": true,
-            "barrageFrequency": 0.33,
-            "throwDurationOverride": true,
-            "throwDuration": 5,
-            "throwAngleOverride": true,
             "throwAngleMin": -90,
             "throwAngleMax": 90,
-            "spinSpeedMin": 2,
-            "spinSpeedMax": 6,
+            "spinSpeedMin": 5,
+            "spinSpeedMax": 10,
             "itemsOverride": true,
             "soundsOverride": false,
-            "impactDecals": [],
-            "windupSounds": [],
+            "impactDecals": [
+
+            ],
+            "windupSounds": [
+
+            ],
             "windupDelay": 0,
-            "spinSpeedOverride": true
+            "throwAway": false,
+            "spinSpeedOverride": false
+        },
+        "Take Arrows": {
+            "barrageCount": 10,
+            "barrageFrequencyOverride": false,
+            "barrageFrequency": 0.1,
+            "throwDurationOverride": false,
+            "throwDuration": 1,
+            "throwAngleOverride": false,
+            "throwAngleMin": -90,
+            "throwAngleMax": 90,
+            "spinSpeedMin": 5,
+            "spinSpeedMax": 10,
+            "itemsOverride": true,
+            "soundsOverride": false,
+            "impactDecals": [
+
+            ],
+            "windupSounds": [
+
+            ],
+            "windupDelay": 0,
+            "throwAway": true,
+            "spinSpeedOverride": false
+        },
+        "Add Bombs": {
+            "barrageCount": 10,
+            "barrageFrequencyOverride": false,
+            "barrageFrequency": 0.1,
+            "throwDurationOverride": false,
+            "throwDuration": 1,
+            "throwAngleOverride": false,
+            "throwAngleMin": -90,
+            "throwAngleMax": 90,
+            "spinSpeedMin": 5,
+            "spinSpeedMax": 10,
+            "itemsOverride": true,
+            "soundsOverride": false,
+            "impactDecals": [
+
+            ],
+            "windupSounds": [
+
+            ],
+            "windupDelay": 0,
+            "throwAway": false,
+            "spinSpeedOverride": false
+        },
+        "Take Bombs": {
+            "barrageCount": 10,
+            "barrageFrequencyOverride": false,
+            "barrageFrequency": 0.1,
+            "throwDurationOverride": false,
+            "throwDuration": 1,
+            "throwAngleOverride": false,
+            "throwAngleMin": -90,
+            "throwAngleMax": 90,
+            "spinSpeedMin": 5,
+            "spinSpeedMax": 10,
+            "itemsOverride": true,
+            "soundsOverride": false,
+            "impactDecals": [
+
+            ],
+            "windupSounds": [
+
+            ],
+            "windupDelay": 0,
+            "throwAway": true,
+            "spinSpeedOverride": false
+        },
+        "Add Rupees": {
+            "barrageCount": 20,
+            "barrageFrequencyOverride": false,
+            "barrageFrequency": 0.1,
+            "throwDurationOverride": false,
+            "throwDuration": 1,
+            "throwAngleOverride": false,
+            "throwAngleMin": -90,
+            "throwAngleMax": 90,
+            "spinSpeedMin": 5,
+            "spinSpeedMax": 10,
+            "itemsOverride": true,
+            "soundsOverride": false,
+            "impactDecals": [
+
+            ],
+            "windupSounds": [
+
+            ],
+            "windupDelay": 0,
+            "throwAway": false,
+            "spinSpeedOverride": false
+        },
+        "Take Rupees": {
+            "barrageCount": 15,
+            "barrageFrequencyOverride": false,
+            "barrageFrequency": 0.1,
+            "throwDurationOverride": false,
+            "throwDuration": 1,
+            "throwAngleOverride": false,
+            "throwAngleMin": -90,
+            "throwAngleMax": 90,
+            "spinSpeedMin": 5,
+            "spinSpeedMax": 10,
+            "itemsOverride": true,
+            "soundsOverride": false,
+            "impactDecals": [
+
+            ],
+            "windupSounds": [
+
+            ],
+            "windupDelay": 0,
+            "throwAway": true,
+            "spinSpeedOverride": false
+        },
+        "Infinite Arrows": {
+            "barrageCount": 180,
+            "barrageFrequencyOverride": true,
+            "barrageFrequency": 0.33,
+            "throwDurationOverride": false,
+            "throwDuration": 1,
+            "throwAngleOverride": false,
+            "throwAngleMin": -90,
+            "throwAngleMax": 90,
+            "spinSpeedMin": 5,
+            "spinSpeedMax": 10,
+            "itemsOverride": true,
+            "soundsOverride": false,
+            "impactDecals": [
+
+            ],
+            "windupSounds": [
+
+            ],
+            "windupDelay": 0,
+            "throwAway": false,
+            "spinSpeedOverride": false
+        },
+        "Infinite Bombs": {
+            "barrageCount": 180,
+            "barrageFrequencyOverride": true,
+            "barrageFrequency": 0.33,
+            "throwDurationOverride": false,
+            "throwDuration": 1,
+            "throwAngleOverride": false,
+            "throwAngleMin": -90,
+            "throwAngleMax": 90,
+            "spinSpeedMin": 5,
+            "spinSpeedMax": 10,
+            "itemsOverride": true,
+            "soundsOverride": false,
+            "impactDecals": [
+
+            ],
+            "windupSounds": [
+
+            ],
+            "windupDelay": 0,
+            "throwAway": false,
+            "spinSpeedOverride": false
+        },
+        "Infinite Magic": {
+            "barrageCount": 180,
+            "barrageFrequencyOverride": true,
+            "barrageFrequency": 0.33,
+            "throwDurationOverride": false,
+            "throwDuration": 1,
+            "throwAngleOverride": false,
+            "throwAngleMin": -90,
+            "throwAngleMax": 90,
+            "spinSpeedMin": 5,
+            "spinSpeedMax": 10,
+            "itemsOverride": true,
+            "soundsOverride": false,
+            "impactDecals": [
+
+            ],
+            "windupSounds": [
+
+            ],
+            "windupDelay": 0,
+            "throwAway": false,
+            "spinSpeedOverride": false
+        },
+        "Recovery Heart": {
+            "barrageCount": 5,
+            "barrageFrequencyOverride": false,
+            "barrageFrequency": 0.1,
+            "throwDurationOverride": false,
+            "throwDuration": 1,
+            "throwAngleOverride": false,
+            "throwAngleMin": -90,
+            "throwAngleMax": 90,
+            "spinSpeedMin": 5,
+            "spinSpeedMax": 10,
+            "itemsOverride": true,
+            "soundsOverride": false,
+            "impactDecals": [
+
+            ],
+            "windupSounds": [
+
+            ],
+            "windupDelay": 0,
+            "throwAway": false,
+            "spinSpeedOverride": false
+        },
+        "Small Magic": {
+            "barrageCount": 5,
+            "barrageFrequencyOverride": false,
+            "barrageFrequency": 0.1,
+            "throwDurationOverride": false,
+            "throwDuration": 1,
+            "throwAngleOverride": false,
+            "throwAngleMin": -90,
+            "throwAngleMax": 90,
+            "spinSpeedMin": 5,
+            "spinSpeedMax": 10,
+            "itemsOverride": true,
+            "soundsOverride": false,
+            "impactDecals": [
+
+            ],
+            "windupSounds": [
+
+            ],
+            "windupDelay": 0,
+            "throwAway": false,
+            "spinSpeedOverride": false
+        },
+        "Big Magic": {
+            "barrageCount": 5,
+            "barrageFrequencyOverride": false,
+            "barrageFrequency": 0.1,
+            "throwDurationOverride": false,
+            "throwDuration": 1,
+            "throwAngleOverride": false,
+            "throwAngleMin": -90,
+            "throwAngleMax": 90,
+            "spinSpeedMin": 5,
+            "spinSpeedMax": 10,
+            "itemsOverride": true,
+            "soundsOverride": false,
+            "impactDecals": [
+
+            ],
+            "windupSounds": [
+
+            ],
+            "windupDelay": 0,
+            "throwAway": false,
+            "spinSpeedOverride": false
+        },
+        "Cucco Attack": {
+            "barrageCount": 180,
+            "barrageFrequencyOverride": true,
+            "barrageFrequency": 0.33,
+            "throwDurationOverride": false,
+            "throwDuration": 1,
+            "throwAngleOverride": false,
+            "throwAngleMin": -90,
+            "throwAngleMax": 90,
+            "spinSpeedMin": 5,
+            "spinSpeedMax": 10,
+            "itemsOverride": true,
+            "soundsOverride": false,
+            "impactDecals": [
+
+            ],
+            "windupSounds": [
+
+            ],
+            "windupDelay": 0,
+            "throwAway": false,
+            "spinSpeedOverride": false
         }
     },
     "spinSpeedMin": 5,
     "spinSpeedMax": 10,
     "minimizeToTray": false,
     "crowdControlEvents": {
-        "Awesome Test Event!": {
+        "Cucco Attack": {
             "enabled": true,
             "name": null,
-            "triggerName": "test_effect",
+            "triggerName": "cucco1",
             "triggerType": "start",
             "bonkEnabled": true,
-            "bonkType": "LttP",
+            "bonkType": "Cucco Attack",
+            "hotkeyEnabled": false,
+            "hotkeyName": "",
+            "secondHotkeyEnabled": false,
+            "secondHotkeyName": "",
+            "secondHotkeyDelay": 3000,
+            "expressionEnabled": true,
+            "expressionName": "Sad",
+            "expressionDuration": 60000,
+            "crowdControlGame": "9",
+            "crowdControlEffect": "34"
+        },
+        "Infinite Bombs": {
+            "enabled": true,
+            "name": null,
+            "triggerName": "infbombs1",
+            "crowdControlGame": "9",
+            "crowdControlEffect": "49",
+            "triggerType": "start",
+            "bonkEnabled": true,
+            "bonkType": "Infinite Bombs",
             "hotkeyEnabled": false,
             "hotkeyName": null,
             "secondHotkeyEnabled": false,
             "secondHotkeyName": null,
-            "secondHotkeyDelay": 3000,
+            "secondHotkeyDelay": 2500,
+            "expressionEnabled": true,
+            "expressionName": "Determined",
+            "expressionDuration": 60000
+        },
+        "Infinite Arrows": {
+            "enabled": true,
+            "name": null,
+            "triggerName": "infarrows1",
+            "crowdControlGame": 9,
+            "crowdControlEffect": "47",
+            "triggerType": "start",
+            "bonkEnabled": true,
+            "bonkType": "Infinite Arrows",
+            "hotkeyEnabled": false,
+            "hotkeyName": null,
+            "secondHotkeyEnabled": false,
+            "secondHotkeyName": null,
+            "secondHotkeyDelay": 2500,
+            "expressionEnabled": true,
+            "expressionName": "Determined",
+            "expressionDuration": 60000
+        },
+        "Infinite Magic": {
+            "enabled": true,
+            "name": null,
+            "triggerName": "infmag1",
+            "crowdControlGame": 9,
+            "crowdControlEffect": "50",
+            "triggerType": "start",
+            "bonkEnabled": true,
+            "bonkType": "Infinite Magic",
+            "hotkeyEnabled": false,
+            "hotkeyName": null,
+            "secondHotkeyEnabled": false,
+            "secondHotkeyName": null,
+            "secondHotkeyDelay": 2500,
+            "expressionEnabled": true,
+            "expressionName": "Determined",
+            "expressionDuration": 60000
+        },
+        "Add Arrows": {
+            "enabled": true,
+            "name": null,
+            "triggerName": "arrowsup",
+            "crowdControlGame": 9,
+            "crowdControlEffect": "41",
+            "triggerType": "log",
+            "bonkEnabled": true,
+            "bonkType": "Add Arrows",
+            "hotkeyEnabled": false,
+            "hotkeyName": null,
+            "secondHotkeyEnabled": false,
+            "secondHotkeyName": null,
+            "secondHotkeyDelay": 2500,
+            "expressionEnabled": true,
+            "expressionName": "Happy",
+            "expressionDuration": 2400
+        },
+        "Take Arrows": {
+            "enabled": true,
+            "name": null,
+            "triggerName": "arrowsdown",
+            "crowdControlGame": 9,
+            "crowdControlEffect": "42",
+            "triggerType": "log",
+            "bonkEnabled": true,
+            "bonkType": "Take Arrows",
+            "hotkeyEnabled": false,
+            "hotkeyName": null,
+            "secondHotkeyEnabled": false,
+            "secondHotkeyName": null,
+            "secondHotkeyDelay": 2500,
+            "expressionEnabled": true,
+            "expressionName": "Sad",
+            "expressionDuration": 2400
+        },
+        "Add Bombs": {
+            "enabled": true,
+            "name": null,
+            "triggerName": "bombsup",
+            "crowdControlGame": 9,
+            "crowdControlEffect": "45",
+            "triggerType": "log",
+            "bonkEnabled": true,
+            "bonkType": "Add Bombs",
+            "hotkeyEnabled": false,
+            "hotkeyName": null,
+            "secondHotkeyEnabled": false,
+            "secondHotkeyName": null,
+            "secondHotkeyDelay": 2500,
+            "expressionEnabled": true,
+            "expressionName": "Happy",
+            "expressionDuration": 2400
+        },
+        "Take Bombs": {
+            "enabled": true,
+            "name": null,
+            "triggerName": "bombsdown",
+            "crowdControlGame": 9,
+            "crowdControlEffect": "46",
+            "triggerType": "log",
+            "bonkEnabled": true,
+            "bonkType": "Take Bombs",
+            "hotkeyEnabled": false,
+            "hotkeyName": null,
+            "secondHotkeyEnabled": false,
+            "secondHotkeyName": null,
+            "secondHotkeyDelay": 2500,
+            "expressionEnabled": true,
+            "expressionName": "Sad",
+            "expressionDuration": 2400
+        },
+        "Add Rupees": {
+            "enabled": true,
+            "name": null,
+            "triggerName": "moneyup",
+            "crowdControlGame": 9,
+            "crowdControlEffect": "43",
+            "triggerType": "log",
+            "bonkEnabled": true,
+            "bonkType": "Add Rupees",
+            "hotkeyEnabled": false,
+            "hotkeyName": null,
+            "secondHotkeyEnabled": false,
+            "secondHotkeyName": null,
+            "secondHotkeyDelay": 2500,
+            "expressionEnabled": true,
+            "expressionName": "Happy",
+            "expressionDuration": 2400
+        },
+        "Take Rupees": {
+            "enabled": true,
+            "name": null,
+            "triggerName": "moneydown",
+            "crowdControlGame": 9,
+            "crowdControlEffect": "44",
+            "triggerType": "log",
+            "bonkEnabled": true,
+            "bonkType": "Take Rupees",
+            "hotkeyEnabled": false,
+            "hotkeyName": null,
+            "secondHotkeyEnabled": false,
+            "secondHotkeyName": null,
+            "secondHotkeyDelay": 2500,
+            "expressionEnabled": true,
+            "expressionName": "Sad",
+            "expressionDuration": 2400
+        },
+        "Recovery Heart": {
+            "enabled": true,
+            "name": null,
+            "triggerName": "heart",
+            "crowdControlGame": 9,
+            "crowdControlEffect": "3",
+            "triggerType": "log",
+            "bonkEnabled": true,
+            "bonkType": "Recovery Heart",
+            "hotkeyEnabled": false,
+            "hotkeyName": null,
+            "secondHotkeyEnabled": false,
+            "secondHotkeyName": null,
+            "secondHotkeyDelay": 2500,
+            "expressionEnabled": true,
+            "expressionName": "Happy",
+            "expressionDuration": 2400
+        },
+        "Small Magic": {
+            "enabled": true,
+            "name": null,
+            "triggerName": "smmag",
+            "crowdControlGame": 9,
+            "crowdControlEffect": "1",
+            "triggerType": "log",
+            "bonkEnabled": true,
+            "bonkType": "Small Magic",
+            "hotkeyEnabled": false,
+            "hotkeyName": null,
+            "secondHotkeyEnabled": false,
+            "secondHotkeyName": null,
+            "secondHotkeyDelay": 2500,
+            "expressionEnabled": true,
+            "expressionName": "Happy",
+            "expressionDuration": 2400
+        },
+        "Big Magic": {
+            "enabled": true,
+            "name": null,
+            "triggerName": "lgmag",
+            "crowdControlGame": 9,
+            "crowdControlEffect": "2",
+            "triggerType": "log",
+            "bonkEnabled": true,
+            "bonkType": "Big Magic",
+            "hotkeyEnabled": false,
+            "hotkeyName": null,
+            "secondHotkeyEnabled": false,
+            "secondHotkeyName": null,
+            "secondHotkeyDelay": 2500,
+            "expressionEnabled": true,
+            "expressionName": "Happy",
+            "expressionDuration": 2400
+        },
+        "Ice Physics ON": {
+            "enabled": true,
+            "name": null,
+            "triggerName": "icephys1",
+            "crowdControlGame": 9,
+            "crowdControlEffect": "40",
+            "triggerType": "start",
+            "bonkEnabled": false,
+            "bonkType": "single",
+            "hotkeyEnabled": true,
+            "hotkeyName": "Apply_Lighting",
+            "secondHotkeyEnabled": false,
+            "secondHotkeyName": "",
+            "secondHotkeyDelay": 60000,
+            "expressionEnabled": false,
+            "expressionName": null,
+            "expressionDuration": 1000
+        },
+        "Ice Physics OFF": {
+            "enabled": true,
+            "name": null,
+            "triggerName": "icephys1",
+            "crowdControlGame": 9,
+            "crowdControlEffect": "40",
+            "triggerType": "stop",
+            "bonkEnabled": false,
+            "bonkType": "single",
+            "hotkeyEnabled": true,
+            "hotkeyName": "Remove_Lighting",
+            "secondHotkeyEnabled": false,
+            "secondHotkeyName": null,
+            "secondHotkeyDelay": 2500,
             "expressionEnabled": false,
             "expressionName": null,
             "expressionDuration": 1000

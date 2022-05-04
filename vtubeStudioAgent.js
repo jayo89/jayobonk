@@ -11,7 +11,7 @@ module.exports = class VtubeStudioAgent {
         this.port = port;
         this.connectSocket();
         this.heartbeat = null;
-        this.tryConnectVTube = setInterval(() => {this.retryConnectSocket() }, 1000 * 3)
+        this.tryConnectVTube = null;
         this.tryAuthorize = null;
     }
 
@@ -27,6 +27,13 @@ module.exports = class VtubeStudioAgent {
     async connectSocket() {
         this.vtsReady = false;
         this.webSocket = new WebSocket("ws://127.0.0.1:" + this.port);
+
+        this.webSocket.addEventListener('error', (event) => {
+            console.log("Couldn't establish connection to VTube Studio, retrying in 3s...");
+            this.webSocket.close();
+            setTimeout( () => { this.connectSocket(); }, 1000 * 3);
+        });
+
         this.webSocket.on('open', () => {
             console.log("Connected to VTube Studio! Initializing plugin wrapper...");
 
