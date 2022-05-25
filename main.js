@@ -5,9 +5,10 @@ const { io } = require("socket.io-client");
 const VtubeStudioAgent = require('./vtubeStudioAgent');
 
 var mainWindow;
+var bonkList = {};
 
 const isPrimary = app.requestSingleInstanceLock();
-    
+
 if (!isPrimary)
   app.quit()
 else
@@ -37,7 +38,7 @@ const createWindow = () => {
     autoHideMenuBar: true,
     useContentSize: true
   })
-  
+
   mainWindow.loadFile("index.html")
   //mainWindow.openDevTools();
   // Minimizing to and restoring from tray
@@ -125,7 +126,7 @@ setInterval(() => {
       status = 5;
     else if (calibrateStage == -1)
       status = 7;
-  
+
     if (!exiting)
       mainWindow.webContents.send("status", status);
   }
@@ -182,11 +183,11 @@ function createServer()
     {
       portInUse = false;
       socket = ws;
-      
+
       socket.on("message", function message(request)
       {
         request = JSON.parse(request);
-    
+
         if (request.type == "calibrating")
         {
           switch (request.stage)
@@ -222,7 +223,7 @@ function createServer()
         else if (request.type == "status")
           connectedBonkerVTube = request.connectedBonkerVTube;
       });
-    
+
       ws.on("close", function message()
       {
         socket = null;
@@ -280,13 +281,18 @@ async function checkCrowdControlEvent(event) {
         if(event.effect == customEvent.triggerName && event.type == customEvent.triggerType && customEvent.enabled == true) {
           matchedEvent = customEvent;
           console.log('Found a matching event: ' + key);
+          console.log(event);
         }
       });
 
       if(matchedEvent) {
         //Execute the bonk if enabled
         if(matchedEvent.bonkEnabled && matchedEvent.bonkType.length > 0) {
-          custom(matchedEvent.bonkType);
+          var customCount = null;
+          if(event.effectParameters[0] !== undefined) {
+            customCount = event.effectParameters[0];
+          }
+          custom(matchedEvent.bonkType,customCount);
         }
 
         //Execute the hotkey(s) if enabled
@@ -423,17 +429,17 @@ function testItem(_, item)
         soundIndex = Math.floor(Math.random() * data.impacts.length);
       } while (!data.impacts[soundIndex].enabled);
     }
-    
+
     var request =
-    {
-      "type": "single",
-      "image": item.location,
-      "weight": item.weight,
-      "scale": item.scale,
-      "sound": item.sound == null && soundIndex != -1 ? data.impacts[soundIndex].location : item.sound,
-      "volume": item.volume,
-      "data": data
-    }
+        {
+          "type": "single",
+          "image": item.location,
+          "weight": item.weight,
+          "scale": item.scale,
+          "sound": item.sound == null && soundIndex != -1 ? data.impacts[soundIndex].location : item.sound,
+          "volume": item.volume,
+          "data": data
+        }
     socket.send(JSON.stringify(request));
   }
 }
@@ -446,15 +452,15 @@ function single()
     const imageWeightScaleSoundVolume = getImageWeightScaleSoundVolume();
 
     var request =
-    {
-      "type": "single",
-      "image": imageWeightScaleSoundVolume.location,
-      "weight": imageWeightScaleSoundVolume.weight,
-      "scale": imageWeightScaleSoundVolume.scale,
-      "sound": imageWeightScaleSoundVolume.sound,
-      "volume": imageWeightScaleSoundVolume.volume,
-      "data": data
-    }
+        {
+          "type": "single",
+          "image": imageWeightScaleSoundVolume.location,
+          "weight": imageWeightScaleSoundVolume.weight,
+          "scale": imageWeightScaleSoundVolume.scale,
+          "sound": imageWeightScaleSoundVolume.sound,
+          "volume": imageWeightScaleSoundVolume.volume,
+          "data": data
+        }
     socket.send(JSON.stringify(request));
   }
 }
@@ -546,11 +552,13 @@ function getCustomImageWeightScaleSoundVolume(customName)
 }
 
 // Acquire a set of images, sounds, and associated properties for a custom bonk
-function getCustomImagesWeightsScalesSoundsVolumes(customName)
+function getCustomImagesWeightsScalesSoundsVolumes(customName,customCount=null)
 {
   var getImagesWeightsScalesSoundsVolumes = [];
-
-  for (var i = 0; i < data.customBonks[customName].barrageCount; i++)
+  if(customCount == null) {
+    customCount = data.customBonks[customName].barrageCount;
+  }
+  for (var i = 0; i < customCount; i++)
     getImagesWeightsScalesSoundsVolumes.push(getCustomImageWeightScaleSoundVolume(customName));
 
   return getImagesWeightsScalesSoundsVolumes;
@@ -559,11 +567,11 @@ function getCustomImagesWeightsScalesSoundsVolumes(customName)
 ipcMain.on("testCustomBonk", (_, message) => { custom(message); });
 
 // A custom bonk test
-function custom(customName)
+function custom(customName,customCount=null)
 {
   console.log("Sending Custom");
   if (socket != null && hasActiveImageCustom(customName)) {
-    const imagesWeightsScalesSoundsVolumes = getCustomImagesWeightsScalesSoundsVolumes(customName);
+    const imagesWeightsScalesSoundsVolumes = getCustomImagesWeightsScalesSoundsVolumes(customName,customCount);
     var images = [], weights = [], scales = [], sounds = [], volumes = [], impactDecals = [], windupSounds = [];
     for (var i = 0; i < imagesWeightsScalesSoundsVolumes.length; i++) {
       images[i] = imagesWeightsScalesSoundsVolumes[i].location;

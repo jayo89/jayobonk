@@ -24,19 +24,32 @@ module.exports = class VtubeStudioAgent {
 
     }
 
+    openConnection() {
+        this.vtsReady = false;
+        this.webSocket = new WebSocket("ws://127.0.0.1:" + this.port);
+        this.webSocket.on('open', () => {
+            this.onOpen();
+        });
+    }
+
     async connectSocket() {
         this.vtsReady = false;
         this.webSocket = new WebSocket("ws://127.0.0.1:" + this.port);
-
+this.webSocket.is
         this.webSocket.addEventListener('error', (event) => {
-            console.log("Couldn't establish connection to VTube Studio, retrying in 3s...");
+            console.log("Socket Error in connection to VTube Studio!");
             this.webSocket.close();
-            setTimeout( () => { this.connectSocket(); }, 1000 * 3);
+        });
+
+        this.webSocket.addEventListener('close', (event) => {
+            console.log("Lost connection to VTube Studio, retrying in 3s...");
+            setTimeout( () => { this.retryConnectSocket(); }, 1000 * 3);
         });
 
         this.webSocket.on('open', () => {
             console.log("Connected to VTube Studio! Initializing plugin wrapper...");
 
+            //Start a timer that checks the websocket's readystate every couple second
             clearInterval(this.tryConnectVTube);
             this.tryConnectVTube = setInterval(() =>
             {
@@ -45,18 +58,21 @@ module.exports = class VtubeStudioAgent {
                     this.vtsReady = false;
                     console.log("Lost connection to VTube Studio!");
                     clearInterval(this.tryConnectVTube);
-                    this.tryConnectVTube = setInterval( () => { this.retryConnectSocket(); }, 1000 * 3);
+                    this.webSocket.close();
                 }
-            }, 1000 * 3);
+            }, 1000 * 2);
 
+            //Trigger authorization
             setTimeout(() => { this.tryAuthorization() }, 500);
         });
     }
 
     retryConnectSocket()
     {
-        console.log("Retrying connection to VTube Studio...");
-        this.connectSocket();
+        if(this.webSocket.readyState != 1) {
+            console.log("Retrying connection to VTube Studio...");
+            this.connectSocket();
+        }
     }
 
     async tryAuthorization()
@@ -87,7 +103,7 @@ module.exports = class VtubeStudioAgent {
         } catch (e) {
             this.vtsReady = false;
             console.error("VTS ERROR: " + e);
-            this.tryConnectVTube = setInterval( () => { this.retryConnectSocket(); }, 1000 * 3);
+            this.webSocket.close();
         }
     }
 
