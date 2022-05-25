@@ -1,3 +1,5 @@
 node_modules/
 .idea/
 out/
+#Electron-builder output
+/dist_electron

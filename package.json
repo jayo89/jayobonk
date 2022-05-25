@@ -2,7 +2,17 @@
   "name": "jayobonk",
   "version": "0.1.0",
   "description": "Modified, CrowdControl-integrated item thrower for Live2D models.",
-  "main": "main.js",
+  "author": "jayo",
+  "scripts": {
+    "electron:build": "vue-cli-service electron:build",
+    "electron:serve": "vue-cli-service electron:serve",
+    "make": "electron-forge make",
+    "package": "electron-forge package",
+    "postinstall": "electron-builder install-app-deps",
+    "postuninstall": "electron-builder install-app-deps",
+    "start": "electron-forge start"
+  },
+  "main": "background.js",
   "dependencies": {
     "axios": "^0.27.2",
     "electron-squirrel-startup": "^1.0.0",
@@ -16,15 +26,10 @@
     "@electron-forge/maker-rpm": "^6.0.0-beta.63",
     "@electron-forge/maker-squirrel": "^6.0.0-beta.63",
     "@electron-forge/maker-zip": "^6.0.0-beta.63",
-    "electron": "^16.2.2"
+    "electron": "^16.2.2",
+    "electron-devtools-installer": "^3.1.0",
+    "vue-cli-plugin-electron-builder": "~2.1.1"
   },
-  "scripts": {
-    "start": "electron-forge start",
-    "package": "electron-forge package",
-    "make": "electron-forge make"
-  },
-  "author": "jayo",
-  "license": "MIT",
   "config": {
     "forge": {
       "packagerConfig": {
@@ -53,5 +58,6 @@
         }
       ]
     }
-  }
+  },
+  "license": "MIT"
 }
